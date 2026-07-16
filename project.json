@@ -1,0 +1,29 @@
+{
+    "assets": [],
+    "encryptLevel": 0,
+    "useFeatures": [],
+    "launchConfig": {
+        "displaySplash": true,
+        "hideLogs": false,
+        "splashText": "Powered by AutoJs6",
+        "stableMode": false
+    },
+    "main": "main.js",
+    "name": "水世界",
+    "optimization": {
+        "removeOpenCv": false,
+        "unusedResources": false
+    },
+    "packageName": "org.autojs.autojs6.shuishijie",
+    "scripts": {},
+    "versionCode": 1,
+    "versionName": "1.0.0",
+    "ignore": [
+        "/.internal/",
+        "/build/",
+        "/node_modules/",
+        "/out/",
+        "/declarations/",
+        "/autojs6-dts/"
+    ]
+}
