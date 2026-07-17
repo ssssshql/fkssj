@@ -1,13 +1,13 @@
-var gameHelper = require("/sdcard/脚本/水世界/modules/gameHelper.js");
+var gameHelper = require("/sdcard/脚本/fkssj/modules/gameHelper.js");
 
 requestScreenCapture(false);
 sleep(1000);
 
-const shuidao = images.read("/sdcard/脚本/水世界/img/水稻.png");
-const liandao = images.read("/sdcard/脚本/水世界/img/镰刀.png");
-const tudi = images.read("/sdcard/脚本/水世界/img/土地.png");
+const shuidao = images.read("/sdcard/脚本/fkssj/img/水稻.png");
+const liandao = images.read("/sdcard/脚本/fkssj/img/镰刀.png");
+const tudi = images.read("/sdcard/脚本/fkssj/img/土地.png");
 
-const shuidaoSeed = images.read("/sdcard/脚本/水世界/img/种子图标/水稻.png");
+const shuidaoSeed = images.read("/sdcard/脚本/fkssj/img/种子图标/水稻.png");
 
 runTest()
 function runTest() {

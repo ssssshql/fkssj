@@ -40,6 +40,11 @@ gameHelper.loadImages = function() {
         // 堡垒
         fortAttack: images.read("./img/堡垒/进攻堡垒.png"),
         fortDefend: images.read("./img/堡垒/防御堡垒.png"),
+        // 盟战奖励
+        warReward: images.read("./img/盟战/城战奖励.png"),
+        warRewardExclaim: images.read("./img/盟战/感叹号.png"),
+        warRewardItem: images.read("./img/盟战/奖励.png"),
+        warRewardClose: images.read("./img/盟战/城战奖励关闭.png"),
         // 搁浅商船
         shipIcon: images.read("./img/搁浅商船/图标.png"),
         shipLarge: images.read("./img/搁浅商船/万吨商轮.png"),
@@ -81,6 +86,22 @@ gameHelper.findFirst = function(targetImage, threshold = 0.7) {
         };
     }
     console.error("未找到目标图片");
+    return null;
+};
+
+// 在指定区域内查找图片并返回第一个坐标（坐标相对于原图）
+gameHelper.findFirstInRegion = function(targetImage, x, y, w, h, threshold) {
+    let screen = captureScreen();
+    var regionX = Math.max(0, x);
+    var regionY = Math.max(0, y);
+    var result = images.findImage(screen, targetImage, {
+        threshold: threshold || 0.7,
+        region: [regionX, regionY, w, h]
+    });
+    if (result) {
+        console.log("区域内找到目标图片，坐标：", result.x, result.y);
+        return { x: result.x, y: result.y };
+    }
     return null;
 };
 
@@ -183,6 +204,55 @@ gameHelper.showOverlay = function(matches, img) {
         overlay.cv.invalidate();
     });
     // 异步关闭，不阻塞主流程
+    threads.start(function() {
+        sleep(1500);
+        try { if (overlay) { overlay.close(); overlay = null; } } catch(e) {}
+    });
+};
+
+// 显示矩形区域叠加层（非阻塞，1.5秒后自动消失）
+// region: [x, y, w, h]，label: 可选文字标签，color: 可选颜色，默认橙色
+gameHelper.showRegionOverlay = function(region, label, color) {
+    if (!region || region.length < 4) return;
+    var rx = region[0], ry = region[1], rw = region[2], rh = region[3];
+    var boxColor = color || "#f97316";
+    var overlay;
+    $ui.run(function() {
+        var dm = context.getResources().getDisplayMetrics();
+        var statusBarH = dm.heightPixels - 2279;
+
+        overlay = floaty.rawWindow(
+            <frame id="root" bg="#00000000">
+                <canvas id="cv" w="*" h="*"/>
+            </frame>
+        );
+        overlay.setSize(-1, -1);
+        overlay.setPosition(0, 0);
+        overlay.setTouchable(false);
+
+        overlay.cv.on("draw", function(canvas) {
+            canvas.drawARGB(0, 0, 0, 0);
+            canvas.translate(0, -statusBarH);
+
+            var paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(4);
+            paint.setColor(colors.parseColor(boxColor));
+
+            canvas.drawRect(rx, ry, rx + rw, ry + rh, paint);
+
+            var textPaint = new Paint();
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(32);
+            textPaint.setColor(colors.parseColor(boxColor));
+
+            var lbl = label || ("Region [" + rx + "," + ry + "," + rw + "," + rh + "]");
+            canvas.drawText(lbl, rx + 4, ry - 6, textPaint);
+        });
+
+        overlay.cv.invalidate();
+    });
     threads.start(function() {
         sleep(1500);
         try { if (overlay) { overlay.close(); overlay = null; } } catch(e) {}
