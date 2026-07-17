@@ -1,11 +1,11 @@
-let gameHelper = require("/sdcard/脚本/水世界/modules/gameHelper.js");
+let gameHelper = require("/sdcard/脚本/fkssj/modules/gameHelper.js");
 
 requestScreenCapture(false);
 sleep(1000);
 
-var img = images.read("/sdcard/脚本/水世界/img/土地.png");
+var img = images.read("/sdcard/脚本/fkssj/img/搁浅商船/万吨商轮.png");
 
-runTest(0.91);
+runTest(0.);
 
 function runTest(threshold) {
     threads.start(function() {
