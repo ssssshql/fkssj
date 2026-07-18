@@ -31,6 +31,14 @@ gameHelper.loadImages = function() {
         stockFull: images.read("./img/该农作物库存已达上限.png"),
         duanzao: images.read("./img/锻造/开始锻造.png"),
         duanzaoDone: images.read("./img/锻造/锻造完成.png"),
+        // 锻造类型
+        forgeTypeGun: images.read("./img/锻造/枪械未选中.png"),
+        forgeTypeArmor: images.read("./img/锻造/防具未选中.png"),
+        forgeTypeBlade: images.read("./img/锻造/兵刃未选中.png"),
+        // 锻造级别
+        forgeLevelBlue: images.read("./img/锻造/蓝级.png"),
+        forgeLevelPurple: images.read("./img/锻造/紫级.png"),
+        forgeLevelOrange: images.read("./img/锻造/橙级.png"),
         // 舰队
         fleetIdle: images.read("./img/舰队/空闲中.png"),
         fleetUnchecked: images.read("./img/舰队/未勾选.png"),
@@ -40,57 +48,71 @@ gameHelper.loadImages = function() {
         // 堡垒
         fortAttack: images.read("./img/堡垒/进攻堡垒.png"),
         fortDefend: images.read("./img/堡垒/防御堡垒.png"),
+        fortRally: images.read("./img/盟战/集结.png"),
         // 盟战奖励
         warReward: images.read("./img/盟战/城战奖励.png"),
         warRewardExclaim: images.read("./img/盟战/感叹号.png"),
         warRewardItem: images.read("./img/盟战/奖励.png"),
         warRewardClose: images.read("./img/盟战/城战奖励关闭.png"),
+        warRewardDone: images.read("./img/盟战/领取奖励完成.png"),
         // 搁浅商船
         shipIcon: images.read("./img/搁浅商船/图标.png"),
         shipLarge: images.read("./img/搁浅商船/万吨商轮.png"),
         shipInList: images.read("./img/搁浅商船/万吨货轮在列表.png"),
-        shipGoBtn: images.read("./img/搁浅商船/前往按钮.png")
+        shipGoBtn: images.read("./img/搁浅商船/前往按钮.png"),
+        shipCloseList: images.read("./img/搁浅商船/关闭货轮列表.png"),
+        shipClosePage: images.read("./img/搁浅商船/关闭搁浅商船页面.png"),
+        // 通用导航
+        baseIcon: images.read("./img/通用/基地.png"),
+        worldIcon: images.read("./img/通用/世界.png"),
+        forgeHouse: images.read("./img/通用/锻造屋.png"),
+        forgeBack: images.read("./img/通用/锻造屋返回.png"),
+        forgeSize: images.read("./img/通用/锻造屋大小.png")
     };
 };
 
 // 屏幕查找图片并点击中心 + 随机像素
-gameHelper.findAndClick = function(targetImage, threshold = 0.7) {
+gameHelper.findAndClick = function(targetImage, threshold, name) {
+    if (typeof threshold === "string") { name = threshold; threshold = 0.7; }
     let screen = captureScreen();
     var result = images.findImage(screen, targetImage, {
-        threshold: threshold
+        threshold: threshold || 0.7
     });
+    var tag = name ? " [" + name + "]" : "";
     if (result) {
-        console.log("找到目标图片，坐标：", result.x, result.y);
+        console.log("找到图片" + tag + "，坐标：", result.x, result.y);
         click(
             result.x + targetImage.getWidth() / 2 + random(-10, 10),
             result.y + targetImage.getHeight() / 2 + random(-10, 10)
         );
         return true;
     } else {
-        console.error("未找到目标图片");
+        console.error("未找到图片" + tag);
         return false;
     }
 };
 
 // 屏幕查找图片并返回第一个坐标
-gameHelper.findFirst = function(targetImage, threshold = 0.7) {
+gameHelper.findFirst = function(targetImage, threshold, name) {
+    if (typeof threshold === "string") { name = threshold; threshold = 0.7; }
     let screen = captureScreen();
     var result = images.findImage(screen, targetImage, {
-        threshold: threshold
+        threshold: threshold || 0.7
     });
+    var tag = name ? " [" + name + "]" : "";
     if (result) {
-        console.log("找到目标图片，坐标：", result.x, result.y);
+        console.log("找到图片" + tag + "，坐标：", result.x, result.y);
         return {
             x: result.x,
-            y: result.y 
+            y: result.y
         };
     }
-    console.error("未找到目标图片");
+    console.error("未找到图片" + tag);
     return null;
 };
 
-// 在指定区域内查找图片并返回第一个坐标（坐标相对于原图）
-gameHelper.findFirstInRegion = function(targetImage, x, y, w, h, threshold) {
+// 在指定区域内查找图片并返回第一个坐标
+gameHelper.findFirstInRegion = function(targetImage, x, y, w, h, threshold, name) {
     let screen = captureScreen();
     var regionX = Math.max(0, x);
     var regionY = Math.max(0, y);
@@ -98,64 +120,30 @@ gameHelper.findFirstInRegion = function(targetImage, x, y, w, h, threshold) {
         threshold: threshold || 0.7,
         region: [regionX, regionY, w, h]
     });
+    var tag = name ? " [" + name + "]" : "";
     if (result) {
-        console.log("区域内找到目标图片，坐标：", result.x, result.y);
+        console.log("区域内找到图片" + tag + "，坐标：", result.x, result.y);
         return { x: result.x, y: result.y };
     }
+    console.error("区域内未找到图片" + tag);
     return null;
 };
 
 // 屏幕查找图片并返回所有坐标
-gameHelper.findAll = function(targetImage, threshold = 0.7, max = 20) {
+gameHelper.findAll = function(targetImage, threshold, name) {
+    if (typeof threshold === "string") { name = threshold; threshold = 0.7; }
     let screen = captureScreen();
     var result = images.matchTemplate(screen, targetImage, {
-        threshold,
-        max
+        threshold: threshold || 0.7,
+        max: 20
     });
-    result.matches.forEach(match => {
-        log("point = " + match.point + ", similarity = " + match.similarity);
+    var tag = name ? " [" + name + "]" : "";
+    result.matches.forEach(function(match) {
+        log("找到图片" + tag + " point=" + match.point + " similarity=" + match.similarity);
     });
-    return result.matches.map(match => ({
-        x: match.point.x ,
-        y: match.point.y
-    }));
-};
-
-// 锻造：每隔30s检测开始锻造按钮，有则点击；检测到锻造完成则点屏幕边缘关闭
-gameHelper.autoWeapon = function(loadedImages, shouldStop, uiLog) {
-    var _log = uiLog || function() { console.log.apply(null, arguments); };
-    if (!loadedImages) { _log("资源未加载，请先启动游戏"); return; }
-    var targetImg = loadedImages.duanzao;
-    var doneImg = loadedImages.duanzaoDone;
-    if (!targetImg) { _log("锻造图片未加载"); return; }
-    var dm = context.getResources().getDisplayMetrics();
-    var sw = dm.widthPixels, sh = dm.heightPixels;
-    _log("锻造任务已启动，每30s检测一次");
-    while (!shouldStop()) {
-        // 检测锻造完成弹窗，点边缘关闭
-        if (doneImg) {
-            var donePos = gameHelper.findFirst(doneImg, 0.7);
-            if (donePos) {
-                var edges = [
-                    [random(20, 60), random(100, 200)],
-                    [sw - random(20, 60), random(100, 200)],
-                    [random(20, 60), sh - random(200, 400)],
-                    [sw - random(20, 60), sh - random(200, 400)]
-                ];
-                var e = edges[random(0, edges.length - 1)];
-                click(e[0], e[1]);
-                _log("锻造完成，点击空白区域: (" + e[0] + ", " + e[1] + ")");
-                sleep(2000);
-            }
-        }
-        // 检测开始锻造
-        var pos = gameHelper.findFirst(targetImg, 0.7);
-        if (pos) {
-            click(pos.x + targetImg.getWidth() / 2, pos.y + targetImg.getHeight() / 2);
-            _log("点击开始锻造: (" + pos.x + ", " + pos.y + ")");
-        }
-        for (var i = 0; i < 30 && !shouldStop(); i++) sleep(1000);
-    }
+    return result.matches.map(function(match) {
+        return { x: match.point.x, y: match.point.y };
+    });
 };
 
 // 显示检测结果叠加层（非阻塞，1.5秒后自动消失）
@@ -167,8 +155,8 @@ gameHelper.showOverlay = function(matches, img) {
     var overlay;
     $ui.run(function() {
         var boxColor = "#22c55e";
-        var dm = context.getResources().getDisplayMetrics();
-        var statusBarH = dm.heightPixels - 2279;
+        var resId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        var statusBarH = context.getResources().getDimensionPixelSize(resId);
 
         overlay = floaty.rawWindow(
             <frame id="root" bg="#00000000">
@@ -219,7 +207,8 @@ gameHelper.showRegionOverlay = function(region, label, color) {
     var overlay;
     $ui.run(function() {
         var dm = context.getResources().getDisplayMetrics();
-        var statusBarH = dm.heightPixels - 2279;
+        var resId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        var statusBarH = context.getResources().getDimensionPixelSize(resId);
 
         overlay = floaty.rawWindow(
             <frame id="root" bg="#00000000">
@@ -257,6 +246,18 @@ gameHelper.showRegionOverlay = function(region, label, color) {
         sleep(1500);
         try { if (overlay) { overlay.close(); overlay = null; } } catch(e) {}
     });
+};
+
+// 双指向内收拢（缩小地图）
+gameHelper.pinchZoomOut = function() {
+    console.log("双指向内收拢（缩小地图）");
+    var dm = context.getResources().getDisplayMetrics();
+    var cx = Math.round(dm.widthPixels / 2);
+    var cy = Math.round(dm.heightPixels / 2);
+    gestures(
+        [0, 800, [cx - 300, cy - 100], [cx - 50, cy]],
+        [0, 800, [cx + 300, cy + 100], [cx + 50, cy]]
+    );
 };
 
 // 查找最高点

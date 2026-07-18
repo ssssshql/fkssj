@@ -7,23 +7,24 @@ var plantFood = require("./modules/plantFood.js");
 var fleet = require("./modules/fleet.js");
 var merchantShip = require("./modules/merchantShip.js");
 var war = require("./modules/war.js");
+var weapon = require("./modules/weapon.js");
 var uiHelpers = require("./modules/uiHelpers.js");
 var floatingPanel = require("./modules/floatingPanel.js");
+var navigate = require("./modules/navigate.js");
 
 var C = theme.C;
-var cropStatMap = theme.cropStatMap;
 var redeemCodes = theme.redeemCodes;
 var foodOptions = theme.foodOptions;
 
 var loadedImages = null;
 var currentTask = null;
-var currentTab = "food";
+var selectedTask = "food";
 var runCount = 0;
 var startTime = 0;
 var selectedFood = foodOptions[0];
 var selectedShipMode = "once";
 var selectedWarMode = "attack";
-var harvestStats = { rice: 0, corn: 0, potato: 0, tomato: 0, carrot: 0, cabbage: 0, soybean: 0, weapon: 0 };
+var harvestStats = floatingPanel.stats;
 var currentNav = "home";
 var icoBitmap = images.read("./ico.png").getBitmap();
 
@@ -55,77 +56,69 @@ $ui.layout(
                                 </card>
                             </horizontal>
 
-                            <text text="今日收获" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 12 10 16"/>
+                            <text text="累计统计" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 12 10 16"/>
 
-                            {/* Row 1 */}
                             <horizontal w="*" padding="16 0 16 0">
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="0 0 4 4">
                                     <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/水稻.png")}/>
-                                        <text id="stat_rice" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="水稻" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                        <text text="&#127793;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
+                                        <text id="stat_food" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
+                                        <text text="种植" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
                                     <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/玉米.png")}/>
-                                        <text id="stat_corn" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="玉米" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/土豆.png")}/>
-                                        <text id="stat_potato" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="土豆" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 0 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/西红柿.png")}/>
-                                        <text id="stat_tomato" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="西红柿" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                            </horizontal>
-
-                            {/* Row 2 */}
-                            <horizontal w="*" padding="16 0 16 0">
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="0 0 4 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/胡萝卜.png")}/>
-                                        <text id="stat_carrot" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="胡萝卜" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/卷心菜.png")}/>
-                                        <text id="stat_cabbage" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="卷心菜" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/种子图标/大豆.png")}/>
-                                        <text id="stat_soybean" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="大豆" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
-                                    </vertical>
-                                </card>
-                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 0 4">
-                                    <vertical gravity="center" padding="8 10">
-                                        <img w="30" h="30" scaleType="centerCrop" circle="true" margin="0 0 0 4" src={"file://" + files.path("./img/镰刀.png")}/>
-                                        <text id="stat_weapon" text="0" textColor={C.textPrimary} textSize="22sp" textStyle="bold" gravity="center"/>
+                                        <text text="&#9876;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
+                                        <text id="stat_weapon" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
                                         <text text="锻造" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
+                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
+                                    <vertical gravity="center" padding="8 10">
+                                        <text text="&#9973;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
+                                        <text id="stat_ship" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
+                                        <text text="商船" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                    </vertical>
+                                </card>
+                                <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 0 4">
+                                    <vertical gravity="center" padding="8 10">
+                                        <text text="&#128293;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
+                                        <text id="stat_war" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
+                                        <text text="盟战" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                    </vertical>
+                                </card>
                             </horizontal>
+
+                            {/* Device info */}
+                            <text text="设备信息" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 12"/>
+                            <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
+                                <vertical padding="12 10">
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="品牌型号" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="txt_device_model" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="Android" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="txt_device_android" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text id="txt_android_status" text="" textColor={C.textMuted} textSize="10sp" margin="8 0 0 0"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="分辨率" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="txt_resolution" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text id="txt_resolution_status" text="" textColor={C.textMuted} textSize="10sp" margin="8 0 0 0"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical">
+                                        <text text="电量" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="txt_device_battery" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                </vertical>
+                            </card>
 
                             {/* Log */}
                             <text text="运行日志" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 16"/>
                             <card w="*" cardCornerRadius="12dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <ScrollView id="log_scroll" h="160" padding="12 10">
-                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="11sp" typeface="monospace" lineSpacingMultiplier="1.2"/>
+                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="11sp" typeface="monospace" lineSpacingMultiplier="1.0"/>
                                 </ScrollView>
                             </card>
 
@@ -171,12 +164,29 @@ $ui.layout(
                                         <text text="&#128293;" textSize="16sp" margin="0 0 10 0"/>
                                         <text text="自动参与盟战" textColor={C.textSecondary} textSize="13sp"/>
                                     </horizontal>
+                            <horizontal margin="0 0 0 10" gravity="center_vertical">
+                                        <text text="&#9973;" textSize="16sp" margin="0 0 10 0"/>
+                                        <text text="自动搁浅商船出征" textColor={C.textSecondary} textSize="13sp"/>
+                                    </horizontal>
                                     <horizontal margin="0 0 0 0" gravity="center_vertical">
                                         <text text="&#9733;" textSize="16sp" margin="0 0 10 0"/>
                                         <text text="兑换码一键复制" textColor={C.textSecondary} textSize="13sp"/>
                                     </horizontal>
                                 </vertical>
                             </card>
+
+                            <card id="github_link" w="*" cardCornerRadius="14dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="0 12 0 0">
+                                <horizontal padding="16 14" gravity="center_vertical" foreground="?selectableItemBackground">
+                                    <text text="&#128279;" textSize="16sp" margin="0 0 10 0"/>
+                                    <vertical layout_weight="1">
+                                        <text text="GitHub" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
+                                        <text text="github.com/ssssshql/fkssj" textColor={C.textSecondary} textSize="11sp" margin="0 2 0 0"/>
+                                    </vertical>
+                                    <text text="&#8250;" textColor={C.textMuted} textSize="18sp"/>
+                                </horizontal>
+                            </card>
+
+                            <text text="本工具仅供学习交流使用" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 16 0 0"/>
                             <View h="60"/>
                         </vertical>
                     </ScrollView>
@@ -209,6 +219,9 @@ $ui.layout(
 $ui.nav_home.on("click", function() { currentNav = "home"; uiHelpers.switchNav("home", currentNav, C); });
 $ui.nav_redeem.on("click", function() { currentNav = "redeem"; uiHelpers.switchNav("redeem", currentNav, C); });
 $ui.nav_about.on("click", function() { currentNav = "about"; uiHelpers.switchNav("about", currentNav, C); });
+$ui.github_link.on("click", function() {
+    app.openUrl("https://github.com/ssssshql/fkssj");
+});
 
 // ── Build redeem list ──
 uiHelpers.buildRedeemList(redeemCodes, C, uiHelpers.dateStr);
@@ -226,11 +239,12 @@ try {
     decor.setBackgroundColor(colors.parseColor(C.bg));
 } catch(e) {}
 
-// ── Init panel state ──
-floatingPanel.selectedFood = selectedFood;
-floatingPanel.selectedShipMode = selectedShipMode;
-floatingPanel.selectedWarMode = selectedWarMode;
-floatingPanel.currentTab = currentTab;
+// ── Init panel state（从持久化配置恢复）──
+if (floatingPanel.selectedFood) selectedFood = floatingPanel.selectedFood;
+else floatingPanel.selectedFood = selectedFood;
+selectedShipMode = floatingPanel.selectedShipMode;
+selectedWarMode = floatingPanel.selectedWarMode;
+selectedTask = floatingPanel.currentTask;
 
 // ── Floating panel context ──
 var panelCtx = {
@@ -239,31 +253,74 @@ var panelCtx = {
     onFoodChange: function(food) { selectedFood = food; floatingPanel.selectedFood = food; },
     onShipModeChange: function(mode) { selectedShipMode = mode; floatingPanel.selectedShipMode = mode; },
     onWarModeChange: function(mode) { selectedWarMode = mode; floatingPanel.selectedWarMode = mode; },
-    onTabChange: function(tab) { currentTab = tab; floatingPanel.currentTab = tab; },
-    onRun: function() { startTask(currentTab); },
+    onTaskChange: function(task) { selectedTask = task; },
+    onRun: function() { startTask(selectedTask); },
     onStop: function() { stopTask(); }
 };
+
+// ── Init stats display & resolution ──
+uiHelpers.initStats(harvestStats);
+try {
+    var dm = context.getResources().getDisplayMetrics();
+    var rw = dm.widthPixels, rh = dm.heightPixels;
+    $ui.txt_resolution.setText(rw + " × " + rh);
+    var supported = (rw === 1080 && rh === 2400);
+    $ui.txt_resolution.setTextColor(colors.parseColor(supported ? C.textPrimary : C.error));
+    $ui.txt_resolution_status.setText(supported ? "已适配" : "未适配");
+    $ui.txt_resolution_status.setTextColor(colors.parseColor(supported ? C.green : C.error));
+} catch(e) {}
+try {
+    $ui.txt_device_model.setText(device.brand + " " + device.model);
+    var sdkOk = device.sdkInt >= 24;
+    $ui.txt_device_android.setText("Android " + device.release + " (API " + device.sdkInt + ")");
+    $ui.txt_device_android.setTextColor(colors.parseColor(sdkOk ? C.textPrimary : C.error));
+    $ui.txt_android_status.setText(sdkOk ? "已适配" : "版本过低");
+    $ui.txt_android_status.setTextColor(colors.parseColor(sdkOk ? C.green : C.error));
+} catch(e) {}
+try {
+    var bat = device.getBattery();
+    var charging = device.isCharging();
+    $ui.txt_device_battery.setText(Math.round(bat) + "%" + (charging ? " 充电中" : ""));
+} catch(e) {}
 
 // ── Task management ──
 function startTask(type) {
     if (currentTask) return;
+    var freqs = floatingPanel.readFreqs();
     currentTask = type; runCount = 0; startTime = Date.now();
     var names = { food: "种植", weapon: "锻造", ship: "商船", war: "盟战" };
+    uiHelpers.appendLog("[启动] " + names[type] + "任务 (" + freqs[type] + "s)");
     floatingPanel.runCount = 0;
     floatingPanel.running = true;
     floatingPanel.setRunningUI(true, C);
-    uiHelpers.updateStats(0, currentTab, selectedFood, harvestStats, cropStatMap);
+    uiHelpers.initStats(harvestStats);
     floatingPanel.showBall(panelCtx);
     threads.start(function() {
+        var shouldStopFn = function() { return currentTask !== type; };
+        // 整点万吨商船 - 启动时就运行（在主任务之前）
+        if ((type === "food" || type === "weapon") && floatingPanel.shipInFood && floatingPanel.shipRunOnStart) {
+            var _shipLog = function(msg) { uiHelpers.appendLog(msg); };
+            merchantShip.runHourlyOnce(loadedImages, _shipLog, shouldStopFn);
+        }
         if (type === "food") {
-            sleep(1500);
+            var logFn = function(msg) { uiHelpers.appendLog(msg); };
+            // 自动定位到种植区
+            if (!navigate.autoLocate(loadedImages, logFn)) {
+                uiHelpers.appendLog("自动定位失败，任务取消");
+                stopTask();
+                return;
+            }
+            sleep(1000);
             plantFood.run(loadedImages, selectedFood,
                 function(count, msg) {
                     runCount = count;
                     floatingPanel.runCount = count;
-                    uiHelpers.updateStats(count, currentTab, selectedFood, harvestStats, cropStatMap);
+                    if (msg.indexOf("完成") !== -1) {
+                        harvestStats.food = (harvestStats.food || 0) + 1;
+                        uiHelpers.updateStats("food", harvestStats);
+                        floatingPanel._saveConfig();
+                    }
                     uiHelpers.appendLog(msg);
-                    try { var ct = floatingPanel.getCountText(); if (ct) ct.setText("第 " + count + " 次"); } catch(e) {}
                 },
                 function() { return currentTask !== type; },
                 function(msg) { uiHelpers.appendLog(msg); },
@@ -271,19 +328,57 @@ function startTask(type) {
                     selectedFood = newFood;
                     floatingPanel.selectedFood = newFood;
                     floatingPanel.updateFoodLabel(newFood);
-                }
+                },
+                freqs.food,
+                floatingPanel.shipInFood,
+                floatingPanel.shipRunOnStart
             );
         } else {
             var shouldStop = function() { return currentTask !== type; };
             var logFn = function(msg) { uiHelpers.appendLog(msg); };
-            if (type === "weapon") gameHelper.autoWeapon(loadedImages, shouldStop, logFn);
-            else if (type === "ship") merchantShip.run(loadedImages, shouldStop, logFn, selectedShipMode);
-            else if (type === "war") war.run(loadedImages, shouldStop, logFn, selectedWarMode);
+            if (type === "weapon") {
+                // 确保在基地界面
+                var scene = navigate.detectScene(loadedImages);
+                if (scene === "world") {
+                    var basePos = gameHelper.findFirst(loadedImages.baseIcon, 0.7, "基地图标");
+                    if (basePos) {
+                        click(basePos.x + loadedImages.baseIcon.getWidth() / 2, basePos.y + loadedImages.baseIcon.getHeight() / 2);
+                        logFn("切换到基地");
+                        sleep(3000);
+                    }
+                } else if (scene === "unknown") {
+                    uiHelpers.appendLog("未在游戏界面，任务取消");
+                    stopTask();
+                    return;
+                }
+                weapon.run(loadedImages, shouldStop, logFn, freqs.weapon, floatingPanel.shipInFood, floatingPanel.shipRunOnStart, floatingPanel.weaponType, floatingPanel.weaponLevel, function() {
+                    harvestStats.weapon = (harvestStats.weapon || 0) + 1;
+                    uiHelpers.updateStats("weapon", harvestStats);
+                    floatingPanel._saveConfig();
+                });
+            }
+            else if (type === "ship") {
+                merchantShip.run(loadedImages, shouldStop, logFn, selectedShipMode, freqs.ship, function() {
+                    harvestStats.ship = (harvestStats.ship || 0) + 1;
+                    uiHelpers.updateStats("ship", harvestStats);
+                    floatingPanel._saveConfig();
+                });
+            }
+            else if (type === "war") {
+                war.run(loadedImages, shouldStop, logFn, selectedWarMode, freqs.war, floatingPanel.warClaimReward, function() {
+                    harvestStats.war = (harvestStats.war || 0) + 1;
+                    uiHelpers.updateStats("war", harvestStats);
+                    floatingPanel._saveConfig();
+                });
+            }
         }
+        floatingPanel._saveConfig();
     });
 }
 
 function stopTask() {
+    var names = { food: "种植", weapon: "锻造", ship: "商船", war: "盟战" };
+    uiHelpers.appendLog("[停止] " + (names[currentTask] || "") + "任务");
     currentTask = null;
     floatingPanel.running = false;
     floatingPanel.setRunningUI(false, C);
@@ -295,9 +390,9 @@ $ui.btn_launch.on("click", function() {
     uiHelpers.appendLog("正在启动游戏...");
     threads.start(function() {
         try {
-            app.launch("com.gx.sw.qa.fkssj007.dyzd.esj");
+            app.launchApp("疯狂水世界")
             uiHelpers.appendLog("游戏已启动，等待录屏权限...");
-            sleep(4000);
+            sleep(1000);
             requestScreenCaptureAsync(false);
             sleep(1000);
             loadedImages = gameHelper.loadImages();

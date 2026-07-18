@@ -2,9 +2,10 @@
 
 var plantFood = {};
 
-plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSwitch) {
+plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSwitch, freq, shipInFood, shipRunOnStart) {
     var gh = require("./gameHelper.js");
     var _log = uiLog || function(msg) { log(msg); };
+    var interval = (freq && freq > 0) ? freq : 30;
     var runCount = 0;
     var cropImg = imgs.crops[foodType];
     var seedImg = imgs.seeds[foodType];
@@ -16,6 +17,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
     // 可切换的作物列表（不含当前）
     var allFoods = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆"];
     var currentFood = foodType;
+    var _lastShipHour = shipRunOnStart ? new Date().getHours() : -1;
 
     function switchToNextFood() {
         var idx = allFoods.indexOf(currentFood);
@@ -42,14 +44,14 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         // 播种后检测 3 次空土地，间隔 1.5s
         for (var c = 0; c < 3; c++) {
             sleep(1500);
-            var emptyLand = gh.findAll(landImg, 0.91);
+            var emptyLand = gh.findAll(landImg, 0.91, "土地");
             if (emptyLand.length === 0) return true; // 空土地没了，播种成功
         }
         // 3 次都有空土地 → 播种失败
         // 用 gesture 快速划到第一个空土地点，触发库存提示（单点，够快）
-        var emptyLand = gh.findAll(landImg, 0.91);
+        var emptyLand = gh.findAll(landImg, 0.91, "土地");
         if (emptyLand.length > 0 && liandaoImg) {
-            var liandaoPos = gh.findFirst(liandaoImg, 0.6);
+            var liandaoPos = gh.findFirst(liandaoImg, 0.6, "镰刀");
             if (liandaoPos) {
                 var ldx = liandaoPos.x + liandaoImg.getWidth() / 2 + Math.round(Math.random() * 6 - 3);
                 var ldy = liandaoPos.y + liandaoImg.getHeight() / 2 + Math.round(Math.random() * 6 - 3);
@@ -63,6 +65,18 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
     }
 
     while (!shouldStop()) {
+        // ===== 整点万吨商船 =====
+        if (shipInFood) {
+            var merchantShip = require("./merchantShip.js");
+            var nowH = new Date().getHours();
+            if (nowH !== _lastShipHour) {
+                _log("[商船] 整点到达 (" + nowH + ":00)，执行一次");
+                merchantShip.runHourlyOnce(imgs, _log, shouldStop);
+                _lastShipHour = nowH;
+            }
+            if (shouldStop()) return true;
+        }
+
         var didSomething = false;
 
         // ===== 收割 =====
@@ -75,7 +89,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             var cname = cropsToTry[ci];
             var cimg = imgs.crops[cname];
             if (!cimg) continue;
-            var matches = gh.findAll(cimg, 0.7);
+            var matches = gh.findAll(cimg, 0.7, cname);
             if (matches.length > 0) {
                 foundCrop = matches;
                 foundCropImg = cimg;
@@ -97,12 +111,12 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             _log("点击" + foundCropName + ": (" + topRice.x + ", " + topRice.y + ")");
             sleep(2000);
 
-            var liandaoPos = gh.findFirst(imgs.liandao, 0.6);
+            var liandaoPos = gh.findFirst(imgs.liandao, 0.6, "镰刀");
             gh.showOverlay(liandaoPos, imgs.liandao);
             if (!liandaoPos) { _log("未找到镰刀"); }
             else {
                 sleep(2000);
-                foundCrop = gh.findAll(foundCropImg, 0.5);
+                foundCrop = gh.findAll(foundCropImg, 0.5, foundCropName);
                 gh.showOverlay(foundCrop, foundCropImg);
                 if (foundCrop.length === 0) { _log("收割前未找到" + foundCropName); }
                 else {
@@ -134,7 +148,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         sleep(3000);
 
         // ===== 翻地播种 =====
-        var land = gh.findAll(imgs.tudi, 0.91);
+        var land = gh.findAll(imgs.tudi, 0.91, "土地");
         gh.showOverlay(land, imgs.tudi);
         if (land.length > 0) {
             didSomething = true;
@@ -143,12 +157,12 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             _log("点击土地: (" + topLand.x + ", " + topLand.y + ")");
             sleep(2000);
 
-            land = gh.findAll(imgs.tudi, 0.91);
+            land = gh.findAll(imgs.tudi, 0.91, "土地");
             gh.showOverlay(land, imgs.tudi);
             if (land.length === 0) { _log("播种前未找到土地"); }
             else {
                 sleep(2000);
-                var seedPos = gh.findFirst(seedImg, 0.7);
+                var seedPos = gh.findFirst(seedImg, 0.7, currentFood + "种子");
                 gh.showOverlay(seedPos, seedImg);
                 if (!seedPos) { _log("未找到" + currentFood + "种子"); }
                 else {
@@ -170,7 +184,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
                     var planted = checkPlantResult(imgs.tudi, imgs.liandao);
                     if (!planted) {
                         _log(currentFood + " 播种失败，尝试切换作物");
-                        var fullPrompt = gh.findFirst(imgs.stockFull, 0.7);
+                        var fullPrompt = gh.findFirst(imgs.stockFull, 0.7, "库存已满");
                         if (fullPrompt) {
                             _log("确认: " + currentFood + " 库存已满");
                         }
@@ -193,17 +207,17 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         if (didSomething) {
             runCount++;
             onProgress(runCount, currentFood + " 完成 第 " + runCount + " 次");
-            _log("等待作物成熟或空土地... 30秒后再检测");
+            _log("等待作物成熟或空土地... " + interval + "秒后再检测");
         } else {
-            onProgress(runCount, "等待作物成熟或空土地... 30秒后再检测");
-            _log("未找到成熟作物或空土地，等待 30 秒再检测");
+            onProgress(runCount, "等待作物成熟或空土地... " + interval + "秒后再检测");
+            _log("未找到成熟作物或空土地，等待 " + interval + " 秒再检测");
         }
 
-        for (var w = 0; w < 6; w++) {
+        for (var w = 0; w < interval; w++) {
             if (shouldStop()) return true;
-            sleep(5000);
+            sleep(1000);
         }
-        _log("30秒到，重新检测");
+        _log(interval + "秒到，重新检测");
     }
 
     return true;

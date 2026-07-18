@@ -5,13 +5,13 @@ var fleet = {};
 var gh = require("./gameHelper.js");
 
 fleet.isIdle = function(imgs, threshold) {
-    var pos = gh.findFirst(imgs.fleetIdle, threshold || 0.7);
+    var pos = gh.findFirst(imgs.fleetIdle, threshold || 0.7, "空闲中");
     if (pos) console.log("检测到空闲舰队: (" + pos.x + ", " + pos.y + ")");
     return pos;
 };
 
 fleet.selectUnchecked = function(imgs, threshold) {
-    var unchecked = gh.findAll(imgs.fleetUnchecked, threshold || 0.7);
+    var unchecked = gh.findAll(imgs.fleetUnchecked, threshold || 0.7, "未勾选");
     console.log("未勾选舰队: " + unchecked.length + " 个");
     for (var i = 0; i < unchecked.length; i++) {
         var p = unchecked[i];
@@ -23,7 +23,7 @@ fleet.selectUnchecked = function(imgs, threshold) {
 };
 
 fleet.dispatch = function(imgs, threshold) {
-    var pos = gh.findFirst(imgs.fleetDispatch, threshold || 0.7);
+    var pos = gh.findFirst(imgs.fleetDispatch, threshold || 0.7, "出征");
     if (pos) {
         console.log("出征按钮位置: (" + pos.x + ", " + pos.y + ")");
         click(pos.x + imgs.fleetDispatch.getWidth() / 2, pos.y + imgs.fleetDispatch.getHeight() / 2);

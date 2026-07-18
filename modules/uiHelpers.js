@@ -27,15 +27,23 @@ helpers.appendLog = function(msg) {
     });
 };
 
-helpers.updateStats = function(c, currentTab, selectedFood, harvestStats, cropStatMap) {
+helpers.updateStats = function(taskKey, stats) {
     $ui.run(function() {
-        if (c !== undefined) {
-            if (currentTab === "food") {
-                var key = cropStatMap[selectedFood];
-                if (key) { harvestStats[key] = c; $ui["stat_" + key].setText(String(c)); }
-            } else if (currentTab === "weapon") {
-                harvestStats.weapon = c; $ui.stat_weapon.setText(String(c));
+        try {
+            if (stats && taskKey) {
+                if ($ui["stat_" + taskKey]) $ui["stat_" + taskKey].setText(String(stats[taskKey] || 0));
             }
+        } catch(e) {}
+    });
+};
+
+helpers.initStats = function(stats) {
+    $ui.run(function() {
+        var keys = ["food", "weapon", "ship", "war"];
+        for (var i = 0; i < keys.length; i++) {
+            try {
+                if ($ui["stat_" + keys[i]]) $ui["stat_" + keys[i]].setText(String(stats[keys[i]] || 0));
+            } catch(e) {}
         }
     });
 };
