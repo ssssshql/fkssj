@@ -261,8 +261,7 @@ var panelCtx = {
 // ── Init stats display & resolution ──
 uiHelpers.initStats(harvestStats);
 try {
-    var dm = context.getResources().getDisplayMetrics();
-    var rw = dm.widthPixels, rh = dm.heightPixels;
+    var rw = device.width, rh = device.height;
     $ui.txt_resolution.setText(rw + " × " + rh);
     var supported = (rw === 1080 && rh === 2400);
     $ui.txt_resolution.setTextColor(colors.parseColor(supported ? C.textPrimary : C.error));
