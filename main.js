@@ -120,20 +120,20 @@ $ui.layout(
                             <text text="权限状态" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 12"/>
                             <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <vertical padding="12 10">
-                                    <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8" clickable="true" foreground="?selectableItemBackground">
                                         <text text="应用列表" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_pkg_list_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_pkg_list" checked="false" clickable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_pkg_list" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
                                     </horizontal>
-                                    <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8" clickable="true" foreground="?selectableItemBackground">
                                         <text text="无障碍" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_access_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_access" checked="false" clickable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_access" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
                                     </horizontal>
-                                    <horizontal id="perm_overlay_row" gravity="center_vertical" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_overlay_row" gravity="center_vertical" clickable="true" foreground="?selectableItemBackground">
                                         <text text="悬浮窗" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_overlay_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_overlay" checked="false" clickable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_overlay" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
                                     </horizontal>
                                 </vertical>
                             </card>
@@ -261,12 +261,13 @@ function checkPerms() {
 checkPerms();
 setInterval(function() { checkPerms(); }, 3000);
 
-// 点击权限行：应用列表/悬浮窗直接请求，无障碍跳转设置
+// 点击权限行跳转对应设置
 $ui.perm_pkg_list_row.on("click", function() {
     try {
-        var intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_SOURCES);
-        intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
-        app.startActivity(intent);
+        app.startActivity(new android.content.Intent(
+            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            android.net.Uri.parse("package:" + context.getPackageName())
+        ));
     } catch(e) {}
 });
 $ui.perm_access_row.on("click", function() {
@@ -276,9 +277,10 @@ $ui.perm_access_row.on("click", function() {
 });
 $ui.perm_overlay_row.on("click", function() {
     try {
-        var intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-        intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
-        app.startActivity(intent);
+        app.startActivity(new android.content.Intent(
+            android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            android.net.Uri.parse("package:" + context.getPackageName())
+        ));
     } catch(e) {}
 });
 
@@ -392,6 +394,10 @@ function stopTask() {
 
 // ── Launch ──
 $ui.btn_launch.on("click", function() {
+    if (!_allPermsOk) {
+        toast("请先开启所需权限");
+        return;
+    }
     uiHelpers.appendLog("正在启动游戏...");
     threads.start(function() {
         try {
