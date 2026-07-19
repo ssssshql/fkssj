@@ -43,11 +43,12 @@ function runOnce(imgs, _log) {
     _log("货轮在列表中，准备前往");
     sleep(1000);
 
-    // 4. 点击前往按钮
-    var goBtn = gh.findFirst(imgs.shipGoBtn, 0.7, "前往按钮");
-    if (!goBtn) { _log("未找到前往按钮"); return "fail"; }
-    click(goBtn.x + imgs.shipGoBtn.getWidth() / 2, goBtn.y + imgs.shipGoBtn.getHeight() / 2);
-    _log("点击前往按钮");
+    // 4. 点击前往按钮（点击最上面的）
+    var goBtns = gh.findAll(imgs.shipGoBtn, 0.7, "前往按钮");
+    if (goBtns.length === 0) { _log("未找到前往按钮"); return "fail"; }
+    var topGoBtn = gh.getMaxYPoint(goBtns);
+    click(topGoBtn.x + imgs.shipGoBtn.getWidth() / 2, topGoBtn.y + imgs.shipGoBtn.getHeight() / 2);
+    _log("点击前往按钮: (" + topGoBtn.x + ", " + topGoBtn.y + ")");
     sleep(2000);
 
     // 5. 点击舰队前往

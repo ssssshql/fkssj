@@ -3,7 +3,7 @@ let gameHelper = require("/sdcard/脚本/fkssj/modules/gameHelper.js");
 requestScreenCapture(false);
 sleep(1000);
 
-var img = images.read("/sdcard/脚本/fkssj/img/盟战/集结.png");
+var img = images.read("/sdcard/脚本/fkssj/img/搁浅商船/前往按钮.png");
 
 
 runTest(0.1);

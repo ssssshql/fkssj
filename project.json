@@ -1,29 +1,55 @@
 {
-    "assets": [],
-    "encryptLevel": 0,
-    "useFeatures": [],
-    "launchConfig": {
-        "displaySplash": true,
-        "hideLogs": false,
-        "splashText": "Powered by AutoJs6",
-        "stableMode": false
-    },
-    "main": "main.js",
-    "name": "水世界",
-    "optimization": {
-        "removeOpenCv": false,
-        "unusedResources": false
-    },
-    "packageName": "org.autojs.autojs6.shuishijie",
-    "scripts": {},
-    "versionCode": 1,
-    "versionName": "1.0.0",
-    "ignore": [
-        "/.internal/",
-        "/build/",
-        "/node_modules/",
-        "/out/",
-        "/declarations/",
-        "/autojs6-dts/"
-    ]
+  "abis": [
+    "arm64-v8a"
+  ],
+  "assets": [],
+  "build": {
+    "id": "420BE026-1",
+    "number": 1,
+    "time": 1784418615818
+  },
+  "useFeatures": [],
+  "launchConfig": {
+    "launcherVisible": true,
+    "runOnBoot": false,
+    "hideLogs": false,
+    "displaySplash": false,
+    "splashText": "Powered by AutoJs6"
+  },
+  "libs": [
+    "OpenCV",
+    "MediaInfo",
+    "Image Quantization"
+  ],
+  "main": "main.js",
+  "name": "水世界辅助",
+  "packageName": "com.github.ssssshql.fkssj",
+  "permissions": [
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION",
+    "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
+    "android.permission.INTERNET",
+    "android.permission.MANAGE_EXTERNAL_STORAGE",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.QUERY_ALL_PACKAGES",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.READ_PHONE_STATE",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    "android.permission.WAKE_LOCK",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+  ],
+  "signatureScheme": "V1 + V2",
+  "versionCode": 1,
+  "versionName": "1.0.0",
+  "ignore": [
+    "/.internal/",
+    "/build/",
+    "/node_modules/",
+    "/out/",
+    "/declarations/",
+    "/autojs6-dts/",
+    "build"
+  ]
 }
