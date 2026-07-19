@@ -120,19 +120,18 @@ $ui.layout(
                                 <vertical padding="12 10">
                                     <horizontal gravity="center_vertical" margin="0 0 0 6">
                                         <text text="应用列表" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_pkg_list" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text id="perm_pkg_list" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
+                                        <text id="perm_pkg_list_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
                                     </horizontal>
                                     <horizontal gravity="center_vertical" margin="0 0 0 6">
                                         <text text="无障碍" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_access" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
-                                    </horizontal>
-                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="后台弹出" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_bg_popup" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text id="perm_access" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
+                                        <text id="perm_access_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
                                     </horizontal>
                                     <horizontal gravity="center_vertical">
                                         <text text="悬浮窗" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_overlay" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text id="perm_overlay" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
+                                        <text id="perm_overlay_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
                                     </horizontal>
                                 </vertical>
                             </card>
@@ -310,11 +309,32 @@ try {
 function setPermText(id, ok) {
     $ui[id].setText(ok ? "已开启" : "未开启");
     $ui[id].setTextColor(colors.parseColor(ok ? C.green : C.error));
+    var btn = $ui[id + "_btn"];
+    if (btn) btn.setVisibility(ok ? 8 : 0); // GONE=8, VISIBLE=0
 }
 setPermText("perm_pkg_list", gameHelper.hasPackageListPerm());
 setPermText("perm_access", gameHelper.hasAccessibilityPerm());
-setPermText("perm_bg_popup", gameHelper.hasBackgroundPopupPerm());
 setPermText("perm_overlay", gameHelper.hasOverlayPerm());
+
+$ui.perm_pkg_list_btn.on("click", function() {
+    try {
+        var intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
+        app.startActivity(intent);
+    } catch(e) {}
+});
+$ui.perm_access_btn.on("click", function() {
+    try {
+        app.startActivity(new android.content.Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));
+    } catch(e) {}
+});
+$ui.perm_overlay_btn.on("click", function() {
+    try {
+        var intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
+        app.startActivity(intent);
+    } catch(e) {}
+});
 
 // ── Task management ──
 function startTask(type) {
