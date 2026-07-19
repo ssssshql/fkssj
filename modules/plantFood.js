@@ -2,7 +2,7 @@
 
 var plantFood = {};
 
-plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSwitch, freq, shipInFood, shipRunOnStart) {
+plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSwitch, freq, shipInFood, shipRunOnStart, onShipBack) {
     var gh = require("./gameHelper.js");
     var _log = uiLog || function(msg) { log(msg); };
     var interval = (freq && freq > 0) ? freq : 30;
@@ -73,6 +73,16 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
                 _log("[商船] 整点到达 (" + nowH + ":00)，执行一次");
                 merchantShip.runHourlyOnce(imgs, _log, shouldStop);
                 _lastShipHour = nowH;
+                if (shouldStop()) return true;
+                // 商船执行后需要重新定位到种植区
+                if (onShipBack) {
+                    _log("重新定位到种植区...");
+                    if (!onShipBack()) {
+                        _log("重新定位失败，等待下轮");
+                        for (var s = 0; s < interval && !shouldStop(); s++) sleep(1000);
+                        continue;
+                    }
+                }
             }
             if (shouldStop()) return true;
         }

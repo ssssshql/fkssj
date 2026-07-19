@@ -300,6 +300,7 @@ function startTask(type) {
         if ((type === "food" || type === "weapon") && floatingPanel.shipInFood && floatingPanel.shipRunOnStart) {
             var _shipLog = function(msg) { uiHelpers.appendLog(msg); };
             merchantShip.runHourlyOnce(loadedImages, _shipLog, shouldStopFn);
+            if (shouldStopFn()) { stopTask(); return; }
         }
         if (type === "food") {
             var logFn = function(msg) { uiHelpers.appendLog(msg); };
@@ -330,7 +331,8 @@ function startTask(type) {
                 },
                 freqs.food,
                 floatingPanel.shipInFood,
-                floatingPanel.shipRunOnStart
+                floatingPanel.shipRunOnStart,
+                function() { return navigate.autoLocate(loadedImages, logFn); }
             );
         } else {
             var shouldStop = function() { return currentTask !== type; };
