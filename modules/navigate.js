@@ -64,7 +64,7 @@ navigate.swipeLeft = function(imgs, _log) {
     var dm = context.getResources().getDisplayMetrics();
     var cx = Math.round(dm.widthPixels / 2);
     var cy = Math.round(dm.heightPixels / 2);
-    var dist = imgs.forgeSize ? imgs.forgeSize.getWidth() : Math.round(dm.widthPixels / 5);
+    var dist = imgs.forgeSize ? imgs.forgeSize.getWidth() + imgs.forgeSize.getWidth()/2 : Math.round(dm.widthPixels / 5);
     var rand = random(-20, 20);
     swipe(cx + rand, cy, cx + dist + rand, cy, 2000 + random(-100, 100));
     _log("向右滑动（距离: " + dist + "px）");

@@ -45,21 +45,8 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         // 播种后检测 3 次空土地，间隔 1.5s
         for (var c = 0; c < 3; c++) {
             sleep(1500);
-            var emptyLand = gh.findLandStable(landImg, 0.91, "土地", 120);
+            var emptyLand = gh.findAllToFilter(landImg, 0.91, "土地", 120);
             if (emptyLand.length === 0) return true; // 空土地没了，播种成功
-        }
-        // 3 次都有空土地 → 播种失败
-        var emptyLand = gh.findLandStable(landImg, 0.91, "土地", 120);
-        if (emptyLand.length > 0 && liandaoImg) {
-            var liandaoPos = gh.findFirst(liandaoImg, 0.6, "镰刀");
-            if (liandaoPos) {
-                var ldx = liandaoPos.x + liandaoImg.getWidth() / 2 + Math.round(Math.random() * 6 - 3);
-                var ldy = liandaoPos.y + liandaoImg.getHeight() / 2 + Math.round(Math.random() * 6 - 3);
-                var tx = emptyLand[0].x + landImg.getWidth() / 2 + Math.round(Math.random() * 6 - 3);
-                var ty = emptyLand[0].y + landImg.getHeight() * 1.5 + Math.round(Math.random() * 6 - 3);
-                gesture(800, [ldx, ldy], [tx, ty]);
-                sleep(1200);
-            }
         }
         return false;
     }
@@ -86,7 +73,6 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             }
             if (shouldStop()) return true;
         }
-        _justSwitchedFood = false;
 
         var didSomething = false;
 
@@ -159,15 +145,10 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         sleep(3000);
 
         // ===== 翻地播种 =====
-        var land = gh.findLandStable(imgs.tudi, 0.91, "土地", 120);
-        gh.showOverlay(land, imgs.tudi);
-        if (land.length > 0) {
+        var land;
+        if(_justSwitchedFood){
+            _justSwitchedFood = false;
             didSomething = true;
-            var topLand = gh.getMaxYPoint(land);
-            click(topLand.x + imgs.tudi.getWidth() / 2, topLand.y + imgs.tudi.getHeight());
-            _log("点击土地: (" + topLand.x + ", " + topLand.y + ")");
-            sleep(2000);
-
             land = gh.findLandStable(imgs.tudi, 0.91, "土地", 120);
             gh.showOverlay(land, imgs.tudi);
             if (land.length === 0) { _log("播种前未找到土地"); }
@@ -182,7 +163,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
                     var sdy = seedPos.y + seedImg.getHeight() / 2 + Math.round(Math.random() * 10 - 5);
                     var plantPoints = land.map(function(p) {
                         return { x: p.x + imgs.tudi.getWidth() / 2 + Math.round(Math.random() * 10 - 5),
-                                 y: p.y + imgs.tudi.getHeight() * 1.5 + Math.round(Math.random() * 10 - 5) };
+                                y: p.y + imgs.tudi.getHeight() * 1.5 + Math.round(Math.random() * 10 - 5) };
                     }).sort(function(a, b) { return a.y - b.y; });
                     gestureParams = [2000, [sdx, sdy]];
                     for (var j = 0; j < plantPoints.length; j++) {
@@ -212,8 +193,63 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
                     }
                 }
             }
-        } else {
-            _log("未找到空土地，跳过播种");
+        }else{
+            land = gh.findAllToFilter(imgs.tudi, 0.91, "土地", 120);
+            gh.showOverlay(land, imgs.tudi);
+            if (land.length > 0) {
+                didSomething = true;
+                var topLand = gh.getMaxYPoint(land);
+                click(topLand.x + imgs.tudi.getWidth() / 2, topLand.y + imgs.tudi.getHeight());
+                _log("点击土地: (" + topLand.x + ", " + topLand.y + ")");
+                sleep(2000);
+
+                land = gh.findLandStable(imgs.tudi, 0.91, "土地", 120);
+                gh.showOverlay(land, imgs.tudi);
+                if (land.length === 0) { _log("播种前未找到土地"); }
+                else {
+                    sleep(2000);
+                    var seedPos = gh.findFirst(seedImg, 0.7, currentFood + "种子");
+                    gh.showOverlay(seedPos, seedImg);
+                    if (!seedPos) { _log("未找到" + currentFood + "种子"); }
+                    else {
+                        _log("种子位置: (" + seedPos.x + ", " + seedPos.y + ")");
+                        var sdx = seedPos.x + seedImg.getWidth() / 2 + Math.round(Math.random() * 10 - 5);
+                        var sdy = seedPos.y + seedImg.getHeight() / 2 + Math.round(Math.random() * 10 - 5);
+                        var plantPoints = land.map(function(p) {
+                            return { x: p.x + imgs.tudi.getWidth() / 2 + Math.round(Math.random() * 10 - 5),
+                                    y: p.y + imgs.tudi.getHeight() * 1.5 + Math.round(Math.random() * 10 - 5) };
+                        }).sort(function(a, b) { return a.y - b.y; });
+                        gestureParams = [2000, [sdx, sdy]];
+                        for (var j = 0; j < plantPoints.length; j++) {
+                            gestureParams.push([plantPoints[j].x, plantPoints[j].y]);
+                        }
+                        gesture.apply(null, gestureParams);
+                        _log("播种完成，经过 " + plantPoints.length + " 块土地");
+
+                        // 检测播种结果
+                        var planted = checkPlantResult(imgs.tudi, imgs.liandao);
+                        if (!planted) {
+                            _log(currentFood + " 播种失败，尝试切换作物");
+                            var fullPrompt = gh.findFirst(imgs.stockFull, 0.7, "库存已满");
+                            if (fullPrompt) {
+                                _log("确认: " + currentFood + " 库存已满");
+                            }
+                            var next = switchToNextFood();
+                            if (next) {
+                                _justSwitchedFood = true;
+                                onProgress(runCount, "已切换: " + next + "，立即重试播种");
+                                continue;
+                            } else {
+                                _log("所有作物都已尝试，等待下轮");
+                                onProgress(runCount, "所有作物都已尝试，等待中...");
+                            }
+                            sleep(2000);
+                        }
+                    }
+                }
+            } else {
+                _log("未找到空土地，跳过播种");
+            }
         }
 
         if (didSomething) {
