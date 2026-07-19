@@ -17,8 +17,8 @@ log("应用列表权限: " + (gh.hasPackageListPerm() ? "已开启" : "未开启
 // 无障碍权限
 log("无障碍权限: " + (gh.hasAccessibilityPerm() ? "已开启" : "未开启"));
 
-// 后台弹出权限
-log("后台弹出权限: " + (gh.hasBackgroundPopupPerm() ? "已开启" : "未开启"));
+// 无障碍权限
+log("无障碍权限: " + (gh.hasAccessibilityPerm() ? "已开启" : "未开启"));
 
 // 悬浮窗权限
 log("悬浮窗权限: " + (gh.hasOverlayPerm() ? "已开启" : "未开启"));

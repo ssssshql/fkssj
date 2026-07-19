@@ -17,9 +17,7 @@
     "splashText": "Powered by AutoJs6"
   },
   "libs": [
-    "OpenCV",
-    "MediaInfo",
-    "Image Quantization"
+    "OpenCV"
   ],
   "main": "main.js",
   "name": "水世界辅助",
@@ -28,11 +26,7 @@
     "android.permission.FOREGROUND_SERVICE",
     "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION",
     "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
-    "android.permission.INTERNET",
-    "android.permission.MANAGE_EXTERNAL_STORAGE",
-    "android.permission.POST_NOTIFICATIONS",
     "android.permission.QUERY_ALL_PACKAGES",
-    "android.permission.READ_EXTERNAL_STORAGE",
     "android.permission.READ_PHONE_STATE",
     "android.permission.RECEIVE_BOOT_COMPLETED",
     "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",

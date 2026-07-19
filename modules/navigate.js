@@ -34,14 +34,14 @@ navigate.goToForgeAndBack = function(imgs, _log) {
     _log("点击锻造屋");
     sleep(2000);
 
-    // 检测锻造完成弹窗，如果出现则点击空白区域关闭
+    // 检测锻造完成弹窗，点击底部关闭（与 weapon.js 一致）
     var dm = context.getResources().getDisplayMetrics();
     if (imgs.duanzaoDone) {
         var forgeDonePos = gh.findFirst(imgs.duanzaoDone, 0.7, "锻造完成");
         if (forgeDonePos) {
-            _log("检测到锻造完成，点击空白区域关闭");
-            click(random(100, dm.widthPixels - 100), random(200, dm.heightPixels - 200));
-            sleep(1500);
+            click(random(100, dm.widthPixels - 100), dm.heightPixels - random(80, 200));
+            _log("锻造完成，点击底部关闭");
+            sleep(2000);
         }
     }
 
