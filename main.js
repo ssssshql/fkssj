@@ -325,10 +325,8 @@ function setPermText(id, ok) {
 }
 checkPerms();
 
-// 返回时刷新权限状态
-activity.on("resume", function() {
-    setTimeout(function() { checkPerms(); }, 500);
-});
+// 定时刷新权限状态（每 3 秒）
+setInterval(function() { checkPerms(); }, 3000);
 
 $ui.perm_pkg_list_btn.on("click", function() {
     try {
