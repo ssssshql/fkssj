@@ -162,24 +162,37 @@ gameHelper.findAllToFilter = function(targetImage, threshold, name, colorThresho
         tmp.recycle();
         tmp2.recycle();
         if(isValid){
-            console.log("检测到有效图片，保留 point=" + item.point + " similarity=" + item.similarity);
+            console.log("检测到有效" + tag + "，保留 point=" + item.point + " similarity=" + item.similarity);
             return true;
         }else{
-            console.log("检测到无效图片，过滤掉 point=" + item.point + " similarity=" + item.similarity);
+            console.log("检测到无效" + tag + "，过滤掉 point=" + item.point + " similarity=" + item.similarity);
             return false;
         }
-    });
-
-
-    res.forEach(function(match) {
-        log("找到图片" + tag + " point=" + match.point + " similarity=" + match.similarity);
     });
     return res.map(item => {
         return { x: item.point.x, y: item.point.y };
     });;
 };
 
-// 显示检测结果叠加层（非阻塞，1.5秒后自动消失）
+// 稳定土地检测：多检测几次，直到出现两个不同数量，取多的那个
+gameHelper.findLandStable = function(targetImage, threshold, name, colorThreshold, maxTries) {
+    maxTries = maxTries || 5;
+    var findFn = (colorThreshold > 0)
+        ? function() { return gameHelper.findAllToFilter(targetImage, threshold, name, colorThreshold); }
+        : function() { return gameHelper.findAll(targetImage, threshold, name); };
+    var lastCount = -1;
+    var lastResult = null;
+    for (var i = 0; i < maxTries; i++) {
+        var result = findFn();
+        var count = result.length;
+        if (lastCount >= 0 && count !== lastCount) {
+            return result.length > lastCount ? result : lastResult;
+        }
+        lastCount = count;
+        lastResult = result;
+    }
+    return lastResult || [];
+};
 gameHelper.showOverlay = function(matches, img) {
     if (!matches) return;
     if (!Array.isArray(matches)) matches = [matches];
