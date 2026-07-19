@@ -284,11 +284,8 @@ var panelCtx = {
 // ── Init stats display & resolution ──
 uiHelpers.initStats(harvestStats);
 try {
-    var wm = context.getSystemService(android.content.Context.WINDOW_SERVICE);
-    var display = wm.getDefaultDisplay();
-    var realDm = new android.util.DisplayMetrics();
-    display.getRealMetrics(realDm);
-    var rw = realDm.widthPixels, rh = realDm.heightPixels;
+    var res = gameHelper.getRealResolution();
+    var rw = res[0], rh = res[1];
     $ui.txt_resolution.setText(rw + " × " + rh);
     var supported = (rw === 1080 && rh === 2400);
     $ui.txt_resolution.setTextColor(colors.parseColor(supported ? C.textPrimary : C.error));
@@ -314,35 +311,10 @@ function setPermText(id, ok) {
     $ui[id].setText(ok ? "已开启" : "未开启");
     $ui[id].setTextColor(colors.parseColor(ok ? C.green : C.error));
 }
-
-// 1. 应用列表权限 (QUERY_ALL_PACKAGES)
-try {
-    var pkgList = context.getPackageManager().getInstalledPackages(0);
-    setPermText("perm_pkg_list", pkgList.size() > 1);
-} catch(e) { setPermText("perm_pkg_list", false); }
-
-// 2. 无障碍权限（AutoJs6）
-try {
-    var accStr = android.provider.Settings.Secure.getString(
-        context.getContentResolver(),
-        android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-    );
-    setPermText("perm_access", accStr != null && accStr.toLowerCase().indexOf("autojs") >= 0);
-} catch(e) { setPermText("perm_access", false); }
-
-// 3. 后台弹出界面权限 (AppOps OP_SYSTEM_ALERT_WINDOW)
-try {
-    var appOps = context.getSystemService(android.content.Context.APP_OPS_SERVICE);
-    var opCode = android.app.AppOpsManager.OP_SYSTEM_ALERT_WINDOW;
-    var mode = appOps.checkOpNoThrow(opCode, android.os.Process.myUid(), context.getPackageName());
-    setPermText("perm_bg_popup", mode === android.app.AppOpsManager.MODE_ALLOWED);
-} catch(e) { setPermText("perm_bg_popup", false); }
-
-// 4. 悬浮窗权限
-try {
-    var overlayOk = android.provider.Settings.canDrawOverlays(context);
-    setPermText("perm_overlay", overlayOk);
-} catch(e) { setPermText("perm_overlay", false); }
+setPermText("perm_pkg_list", gameHelper.hasPackageListPerm());
+setPermText("perm_access", gameHelper.hasAccessibilityPerm());
+setPermText("perm_bg_popup", gameHelper.hasBackgroundPopupPerm());
+setPermText("perm_overlay", gameHelper.hasOverlayPerm());
 
 // ── Task management ──
 function startTask(type) {

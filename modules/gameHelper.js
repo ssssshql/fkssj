@@ -269,4 +269,51 @@ gameHelper.getMaxYPoint = function(points) {
     return topMatch;
 };
 
+// 获取真实物理分辨率 [width, height]
+gameHelper.getRealResolution = function() {
+    var wm = context.getSystemService(android.content.Context.WINDOW_SERVICE);
+    var display = wm.getDefaultDisplay();
+    var realDm = new android.util.DisplayMetrics();
+    display.getRealMetrics(realDm);
+    return [realDm.widthPixels, realDm.heightPixels];
+};
+
+// 应用列表权限
+gameHelper.hasPackageListPerm = function() {
+    try {
+        return context.getPackageManager().getInstalledPackages(0).size() > 1;
+    } catch(e) { return false; }
+};
+
+// 无障碍权限（AutoJs6）
+gameHelper.hasAccessibilityPerm = function() {
+    try {
+        var accStr = android.provider.Settings.Secure.getString(
+            context.getContentResolver(),
+            android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        );
+        return accStr != null && accStr.toLowerCase().indexOf("autojs") >= 0;
+    } catch(e) { return false; }
+};
+
+// 后台弹出界面权限
+gameHelper.hasBackgroundPopupPerm = function() {
+    try {
+        var appOps = context.getSystemService(android.content.Context.APP_OPS_SERVICE);
+        var mode = appOps.checkOpNoThrow(
+            android.app.AppOpsManager.OP_SYSTEM_ALERT_WINDOW,
+            android.os.Process.myUid(),
+            context.getPackageName()
+        );
+        return mode === android.app.AppOpsManager.MODE_ALLOWED;
+    } catch(e) { return false; }
+};
+
+// 悬浮窗权限
+gameHelper.hasOverlayPerm = function() {
+    try {
+        return android.provider.Settings.canDrawOverlays(context);
+    } catch(e) { return false; }
+};
+
 module.exports = gameHelper;
