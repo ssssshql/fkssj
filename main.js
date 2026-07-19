@@ -120,17 +120,17 @@ $ui.layout(
                                     <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
                                         <text text="应用列表" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_pkg_list_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_pkg_list" checked="false" clickable="false" w="wrap" h="wrap"/>
+                                        <Switch id="perm_pkg_list" checked="false" clickable="false" w="auto" h="auto"/>
                                     </horizontal>
                                     <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
                                         <text text="无障碍" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_access_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_access" checked="false" clickable="false" w="wrap" h="wrap"/>
+                                        <Switch id="perm_access" checked="false" clickable="false" w="auto" h="auto"/>
                                     </horizontal>
                                     <horizontal id="perm_overlay_row" gravity="center_vertical" foreground="?selectableItemBackground">
                                         <text text="悬浮窗" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_overlay_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_overlay" checked="false" clickable="false" w="wrap" h="wrap"/>
+                                        <Switch id="perm_overlay" checked="false" clickable="false" w="auto" h="auto"/>
                                     </horizontal>
                                 </vertical>
                             </card>
