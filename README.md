@@ -4,9 +4,9 @@
 
 ## 截图
 
-![截图1](screenshot/截图1.png)
-![截图2](screenshot/截图2.png)
-![截图3](screenshot/截图3.png)
+<img src="screenshot/截图1.png" width="200">
+<img src="screenshot/截图2.png" width="200">
+<img src="screenshot/截图3.png" width="200">
 
 ## 功能
 
