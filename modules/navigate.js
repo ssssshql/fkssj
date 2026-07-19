@@ -34,6 +34,17 @@ navigate.goToForgeAndBack = function(imgs, _log) {
     _log("点击锻造屋");
     sleep(2000);
 
+    // 检测锻造完成弹窗，点击底部关闭（与 weapon.js 一致）
+    var dm = context.getResources().getDisplayMetrics();
+    if (imgs.duanzaoDone) {
+        var forgeDonePos = gh.findFirst(imgs.duanzaoDone, 0.7, "锻造完成");
+        if (forgeDonePos) {
+            click(random(100, dm.widthPixels - 100), dm.heightPixels - random(80, 200));
+            _log("锻造完成，点击底部关闭");
+            sleep(2000);
+        }
+    }
+
     var backPos = gh.findFirst(imgs.forgeBack, 0.7, "锻造屋返回");
     if (!backPos) {
         _log("未找到锻造屋返回按钮，等待...");

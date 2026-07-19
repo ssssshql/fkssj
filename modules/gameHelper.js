@@ -285,14 +285,17 @@ gameHelper.hasPackageListPerm = function() {
     } catch(e) { return false; }
 };
 
-// 无障碍权限（AutoJs6）
+// 无障碍权限
+// 打包后检查 com.github.ssssshql.fkssj，AutoJs6 测试时检查 autojs
 gameHelper.hasAccessibilityPerm = function() {
     try {
         var accStr = android.provider.Settings.Secure.getString(
             context.getContentResolver(),
             android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         );
-        return accStr != null && accStr.toLowerCase().indexOf("autojs") >= 0;
+        if (!accStr) return false;
+        var lower = accStr.toLowerCase();
+        return lower.indexOf("sssshql") >= 0 || lower.indexOf("autojs") >= 0;
     } catch(e) { return false; }
 };
 
