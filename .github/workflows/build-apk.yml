@@ -1,11 +1,11 @@
-name: Build and Release
+name: Build APK
 
 on:
   push:
     branches: [main]
 
 jobs:
-  release:
+  build-apk:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -13,18 +13,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Package project
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Download AutoJs6 APK
         run: |
-          zip -r 水世界辅助.zip \
-            main.js \
-            project.json \
-            modules/ \
-            img/ \
-            -x "*.git*"
+          wget https://github.com/SuperMonster003/AutoJs6/releases/download/v6.7.0/autojs6-v6.7.0-universal-047ae62e.apk -O autojs6.apk
+
+      - name: Download APK Builder
+        run: |
+          mkdir -p .apk-builder
+          curl -L -o .apk-builder/apkbuilder-cli.jar \
+            "https://github.com/Steven-Qiang/AutoJs6-ApkBuilder/releases/download/v1.1.0/apkbuilder-cli.jar"
+
+      - name: Build APK
+        run: |
+          java -jar .apk-builder/apkbuilder-cli.jar \
+            -a autojs6.apk \
+            -s ./ \
+            -o 水世界辅助.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
           name: 水世界辅助 v${{ github.run_number }}
-          files: 水世界辅助.zip
+          files: 水世界辅助.apk
