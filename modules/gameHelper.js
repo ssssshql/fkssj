@@ -286,7 +286,6 @@ gameHelper.hasPackageListPerm = function() {
 };
 
 // 无障碍权限
-// 打包后检查 com.github.ssssshql.fkssj，AutoJs6 测试时检查 autojs
 gameHelper.hasAccessibilityPerm = function() {
     try {
         var accStr = android.provider.Settings.Secure.getString(
@@ -295,7 +294,8 @@ gameHelper.hasAccessibilityPerm = function() {
         );
         if (!accStr) return false;
         var lower = accStr.toLowerCase();
-        return lower.indexOf("sssshql") >= 0 || lower.indexOf("autojs") >= 0;
+        var pkg = context.getPackageName().toLowerCase();
+        return lower.indexOf(pkg) >= 0;
     } catch(e) { return false; }
 };
 
