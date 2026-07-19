@@ -18,6 +18,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
     var allFoods = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆"];
     var currentFood = foodType;
     var _lastShipHour = shipRunOnStart ? new Date().getHours() : -1;
+    var _justSwitchedFood = false;
 
     function switchToNextFood() {
         var idx = allFoods.indexOf(currentFood);
@@ -66,7 +67,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
 
     while (!shouldStop()) {
         // ===== 整点万吨商船 =====
-        if (shipInFood) {
+        if (shipInFood && !_justSwitchedFood) {
             var merchantShip = require("./merchantShip.js");
             var nowH = new Date().getHours();
             if (nowH !== _lastShipHour) {
@@ -86,6 +87,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             }
             if (shouldStop()) return true;
         }
+        _justSwitchedFood = false;
 
         var didSomething = false;
 
@@ -200,6 +202,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
                         }
                         var next = switchToNextFood();
                         if (next) {
+                            _justSwitchedFood = true;
                             onProgress(runCount, "已切换: " + next + "，立即重试播种");
                             continue;
                         } else {
