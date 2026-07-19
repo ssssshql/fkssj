@@ -146,6 +146,39 @@ gameHelper.findAll = function(targetImage, threshold, name) {
     });
 };
 
+// 屏幕查找图片并根据使用二值化过滤无效土地
+gameHelper.findAllToFilter = function(targetImage, threshold, name, colorThreshold) {
+    if (typeof threshold === "string") { name = threshold; threshold = 0.7; }
+    let screen = captureScreen();
+    var result = images.matchTemplate(screen, targetImage, {
+        threshold: threshold || 0.7,
+        max: 20
+    });
+    var tag = name ? " [" + name + "]" : "";
+    let res = result.matches.filter(item=>{
+        let tmp =  images.clip(screen, item.point.x, item.point.y, targetImage.getWidth(), targetImage.getHeight());
+        let tmp2 = images.threshold(tmp, colorThreshold, 255);
+        let isValid = !images.findColor(tmp2, "#000000");
+        tmp.recycle();
+        tmp2.recycle();
+        if(isValid){
+            console.log("检测到有效图片，保留 point=" + item.point + " similarity=" + item.similarity);
+            return true;
+        }else{
+            console.log("检测到无效图片，过滤掉 point=" + item.point + " similarity=" + item.similarity);
+            return false;
+        }
+    });
+
+
+    res.forEach(function(match) {
+        log("找到图片" + tag + " point=" + match.point + " similarity=" + match.similarity);
+    });
+    return res.map(item => {
+        return { x: item.point.x, y: item.point.y };
+    });;
+};
+
 // 显示检测结果叠加层（非阻塞，1.5秒后自动消失）
 gameHelper.showOverlay = function(matches, img) {
     if (!matches) return;

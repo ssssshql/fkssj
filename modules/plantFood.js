@@ -45,12 +45,11 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         // 播种后检测 3 次空土地，间隔 1.5s
         for (var c = 0; c < 3; c++) {
             sleep(1500);
-            var emptyLand = gh.findAll(landImg, 0.91, "土地");
+            var emptyLand = gh.findAllToFilter(landImg, 0.9, "土地", 120);
             if (emptyLand.length === 0) return true; // 空土地没了，播种成功
         }
         // 3 次都有空土地 → 播种失败
-        // 用 gesture 快速划到第一个空土地点，触发库存提示（单点，够快）
-        var emptyLand = gh.findAll(landImg, 0.91, "土地");
+        var emptyLand = gh.findAllToFilter(landImg, 0.9, "土地", 120);
         if (emptyLand.length > 0 && liandaoImg) {
             var liandaoPos = gh.findFirst(liandaoImg, 0.6, "镰刀");
             if (liandaoPos) {
@@ -160,7 +159,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
         sleep(3000);
 
         // ===== 翻地播种 =====
-        var land = gh.findAll(imgs.tudi, 0.91, "土地");
+        var land = gh.findAllToFilter(imgs.tudi, 0.91, "土地", 120);
         gh.showOverlay(land, imgs.tudi);
         if (land.length > 0) {
             didSomething = true;
@@ -169,7 +168,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
             _log("点击土地: (" + topLand.x + ", " + topLand.y + ")");
             sleep(2000);
 
-            land = gh.findAll(imgs.tudi, 0.91, "土地");
+            land = gh.findAllToFilter(imgs.tudi, 0.91, "土地", 120);
             gh.showOverlay(land, imgs.tudi);
             if (land.length === 0) { _log("播种前未找到土地"); }
             else {
