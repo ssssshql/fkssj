@@ -33,7 +33,7 @@ weapon.run = function(loadedImages, shouldStop, uiLog, freq, shipInFood, shipRun
         // 选择锻造种类
         var typeImg = typeImgMap[weaponType];
         if (typeImg) {
-            var pos = gh.findFirst(typeImg, 0.7, weaponType + "未选中");
+            var pos = gh.findFirst(typeImg, 0.8, weaponType + "未选中");
             if (pos) {
                 click(pos.x + typeImg.getWidth() / 2, pos.y + typeImg.getHeight() / 2);
                 _log("切换到 " + weaponType);
@@ -43,7 +43,7 @@ weapon.run = function(loadedImages, shouldStop, uiLog, freq, shipInFood, shipRun
         // 选择锻造级别
         var levelImg = levelImgMap[weaponLevel];
         if (levelImg) {
-            var lpos = gh.findFirst(levelImg, 0.7, weaponLevel);
+            var lpos = gh.findFirst(levelImg, 0.8, weaponLevel);
             if (lpos) {
                 click(lpos.x + levelImg.getWidth() / 2, lpos.y + levelImg.getHeight() / 2);
                 _log("选择 " + weaponLevel);

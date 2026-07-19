@@ -21,7 +21,7 @@ function runOnce(imgs, _log) {
     sleep(2000);
 
     // 3. 检测万吨货轮是否在列表
-    var inList = gh.findFirst(imgs.shipInList, 0.7, "货轮在列表");
+    var inList = gh.findFirst(imgs.shipInList, 0.8, "货轮在列表");
     if (!inList) {
         _log("货轮不在列表，本轮已打完，关闭页面");
         // 关闭货轮列表
