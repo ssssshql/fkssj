@@ -114,6 +114,29 @@ $ui.layout(
                                 </vertical>
                             </card>
 
+                            {/* Permissions */}
+                            <text text="权限状态" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 12"/>
+                            <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
+                                <vertical padding="12 10">
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="应用列表" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="perm_pkg_list" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="无障碍" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="perm_access" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
+                                        <text text="后台弹出" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="perm_bg_popup" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                    <horizontal gravity="center_vertical">
+                                        <text text="悬浮窗" textColor={C.textSecondary} textSize="11sp" w="70"/>
+                                        <text id="perm_overlay" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                    </horizontal>
+                                </vertical>
+                            </card>
+
                             {/* Log */}
                             <text text="运行日志" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 16"/>
                             <card w="*" cardCornerRadius="12dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
@@ -261,13 +284,17 @@ var panelCtx = {
 // ── Init stats display & resolution ──
 uiHelpers.initStats(harvestStats);
 try {
-    var rw = device.width, rh = device.height;
+    var wm = context.getSystemService(android.content.Context.WINDOW_SERVICE);
+    var display = wm.getDefaultDisplay();
+    var realDm = new android.util.DisplayMetrics();
+    display.getRealMetrics(realDm);
+    var rw = realDm.widthPixels, rh = realDm.heightPixels;
     $ui.txt_resolution.setText(rw + " × " + rh);
     var supported = (rw === 1080 && rh === 2400);
     $ui.txt_resolution.setTextColor(colors.parseColor(supported ? C.textPrimary : C.error));
     $ui.txt_resolution_status.setText(supported ? "已适配" : "未适配");
     $ui.txt_resolution_status.setTextColor(colors.parseColor(supported ? C.green : C.error));
-} catch(e) {}
+} catch(e) { log("分辨率检测失败: " + e); }
 try {
     $ui.txt_device_model.setText(device.brand + " " + device.model);
     var sdkOk = device.sdkInt >= 24;
@@ -281,6 +308,41 @@ try {
     var charging = device.isCharging();
     $ui.txt_device_battery.setText(Math.round(bat) + "%" + (charging ? " 充电中" : ""));
 } catch(e) {}
+
+// ── Permission checks ──
+function setPermText(id, ok) {
+    $ui[id].setText(ok ? "已开启" : "未开启");
+    $ui[id].setTextColor(colors.parseColor(ok ? C.green : C.error));
+}
+
+// 1. 应用列表权限 (QUERY_ALL_PACKAGES)
+try {
+    var pkgList = context.getPackageManager().getInstalledPackages(0);
+    setPermText("perm_pkg_list", pkgList.size() > 1);
+} catch(e) { setPermText("perm_pkg_list", false); }
+
+// 2. 无障碍权限（AutoJs6）
+try {
+    var accStr = android.provider.Settings.Secure.getString(
+        context.getContentResolver(),
+        android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    );
+    setPermText("perm_access", accStr != null && accStr.toLowerCase().indexOf("autojs") >= 0);
+} catch(e) { setPermText("perm_access", false); }
+
+// 3. 后台弹出界面权限 (AppOps OP_SYSTEM_ALERT_WINDOW)
+try {
+    var appOps = context.getSystemService(android.content.Context.APP_OPS_SERVICE);
+    var opCode = android.app.AppOpsManager.OP_SYSTEM_ALERT_WINDOW;
+    var mode = appOps.checkOpNoThrow(opCode, android.os.Process.myUid(), context.getPackageName());
+    setPermText("perm_bg_popup", mode === android.app.AppOpsManager.MODE_ALLOWED);
+} catch(e) { setPermText("perm_bg_popup", false); }
+
+// 4. 悬浮窗权限
+try {
+    var overlayOk = android.provider.Settings.canDrawOverlays(context);
+    setPermText("perm_overlay", overlayOk);
+} catch(e) { setPermText("perm_overlay", false); }
 
 // ── Task management ──
 function startTask(type) {

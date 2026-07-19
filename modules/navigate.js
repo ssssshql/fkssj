@@ -55,9 +55,9 @@ navigate.swipeLeft = function(imgs, _log) {
     var cy = Math.round(dm.heightPixels / 2);
     var dist = imgs.forgeSize ? imgs.forgeSize.getWidth() : Math.round(dm.widthPixels / 5);
     var rand = random(-20, 20);
-    swipe(cx + rand, cy, cx + dist + rand, cy, 500 + random(-50, 50));
+    swipe(cx + rand, cy, cx + dist + rand, cy, 2000 + random(-100, 100));
     _log("向右滑动（距离: " + dist + "px）");
-    sleep(1000);
+    sleep(2000);
 };
 
 // 完整定位流程
