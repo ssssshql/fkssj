@@ -306,15 +306,29 @@ try {
 } catch(e) {}
 
 // ── Permission checks ──
+function checkPerms() {
+    var ok1 = gameHelper.hasPackageListPerm();
+    var ok2 = gameHelper.hasAccessibilityPerm();
+    var ok3 = gameHelper.hasOverlayPerm();
+    $ui.run(function() {
+        setPermText("perm_pkg_list", ok1);
+        setPermText("perm_access", ok2);
+        setPermText("perm_overlay", ok3);
+    });
+    return ok1 && ok2 && ok3;
+}
 function setPermText(id, ok) {
     $ui[id].setText(ok ? "已开启" : "未开启");
     $ui[id].setTextColor(colors.parseColor(ok ? C.green : C.error));
     var btn = $ui[id + "_btn"];
-    if (btn) btn.setVisibility(ok ? 8 : 0); // GONE=8, VISIBLE=0
+    if (btn) btn.setVisibility(ok ? 8 : 0);
 }
-setPermText("perm_pkg_list", gameHelper.hasPackageListPerm());
-setPermText("perm_access", gameHelper.hasAccessibilityPerm());
-setPermText("perm_overlay", gameHelper.hasOverlayPerm());
+checkPerms();
+
+// 返回时刷新权限状态
+activity.on("resume", function() {
+    setTimeout(function() { checkPerms(); }, 500);
+});
 
 $ui.perm_pkg_list_btn.on("click", function() {
     try {
@@ -339,6 +353,10 @@ $ui.perm_overlay_btn.on("click", function() {
 // ── Task management ──
 function startTask(type) {
     if (currentTask) return;
+    if (!checkPerms()) {
+        toast("请先开启所需权限");
+        return;
+    }
     var freqs = floatingPanel.readFreqs();
     currentTask = type; runCount = 0; startTime = Date.now();
     var names = { food: "种植", weapon: "锻造", ship: "商船", war: "盟战" };
