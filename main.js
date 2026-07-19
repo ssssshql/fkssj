@@ -24,7 +24,6 @@ var selectedFood = foodOptions[0];
 var selectedShipMode = "once";
 var selectedWarMode = "attack";
 var harvestStats = floatingPanel.stats;
-var currentNav = "home";
 var icoBitmap = images.read("./ico.png").getBitmap();
 
 function dp(v) { return Math.round(v * context.getResources().getDisplayMetrics().density); }
@@ -49,9 +48,13 @@ $ui.layout(
                                     <text text="疯狂水世界" textColor={C.textPrimary} textSize="21sp" textStyle="bold"/>
                                     <text text="辅助工具 v1.0" textColor={C.textMuted} textSize="13sp" margin="0 2 0 0"/>
                                 </vertical>
+                                <card id="btn_about" cardCornerRadius="22dp" cardElevation="0dp"
+                                      cardBackgroundColor={C.card} foreground="?selectableItemBackground" w="44" h="44" margin="0 0 8 0">
+                                    <text text="&#9432;" textColor={C.textMuted} textSize="22sp" gravity="center"/>
+                                </card>
                                 <card id="btn_launch" cardCornerRadius="22dp" cardElevation="1dp"
-                                      cardBackgroundColor={C.accent} foreground="?selectableItemBackground" w="44" h="44">
-                                    <text text="&#9654;" textColor="#FFFFFF" textSize="18sp" gravity="center"/>
+                                      cardBackgroundColor="#C7C7CC" foreground="?selectableItemBackground" w="44" h="44">
+                                    <text id="btn_launch_icon" text="&#9654;" textColor="#FFFFFF" textSize="18sp" gravity="center"/>
                                 </card>
                             </horizontal>
 
@@ -139,95 +142,45 @@ $ui.layout(
                             <text text="运行日志" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 16"/>
                             <card w="*" cardCornerRadius="12dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <ScrollView id="log_scroll" h="160" padding="12 10">
-                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="13sp" typeface="monospace" lineSpacingMultiplier="1.0"/>
+                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="13sp" typeface="monospace" lineSpacingExtra="-4dp"/>
                                 </ScrollView>
                             </card>
 
-                            <View h="60" bg={C.bg}/>
+                            <View h="20" bg={C.bg}/>
                         </vertical>
                     </ScrollView>
                 </vertical>
 
-                {/* ── About page ── */}
-                <vertical id="page_about" layout_width="match_parent" layout_height="match_parent" visibility="gone">
-                    <ScrollView layout_width="match_parent" layout_height="match_parent" bg={C.bg}>
-                        <vertical layout_width="match_parent" padding="20 20 20 20">
-                            <frame w="*" h="auto" margin="0 0 12 0" gravity="center_horizontal">
-                                <card w="72" h="72" cardCornerRadius="36dp" cardElevation="0dp" cardBackgroundColor={C.card}>
-                                    <img w="72" h="72" scaleType="centerCrop" circle="true" src={"file://" + files.path("./ico.png")}/>
-                                </card>
-                            </frame>
-                            <text text="疯狂水世界" textColor={C.textPrimary} textSize="22sp" textStyle="bold" gravity="center"/>
-                            <text text="辅助工具 v1.0" textColor={C.textSecondary} textSize="13sp" gravity="center" margin="0 4 0 24"/>
-                            <card w="*" cardCornerRadius="14dp" cardElevation="0dp" cardBackgroundColor={C.card}>
-                                <vertical padding="20 18">
-                                    <text text="功能介绍" textColor={C.textPrimary} textSize="15sp" textStyle="bold" margin="0 0 14 0"/>
-                                    <horizontal margin="0 0 0 10" gravity="center_vertical">
-                                        <text text="&#127793;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="自动种植、收割作物" textColor={C.textSecondary} textSize="13sp"/>
-                                    </horizontal>
-                                    <horizontal margin="0 0 0 10" gravity="center_vertical">
-                                        <text text="&#9876;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="自动锻造武器" textColor={C.textSecondary} textSize="13sp"/>
-                                    </horizontal>
-                                    <horizontal margin="0 0 0 10" gravity="center_vertical">
-                                        <text text="&#128293;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="自动参与盟战" textColor={C.textSecondary} textSize="13sp"/>
-                                    </horizontal>
-                            <horizontal margin="0 0 0 10" gravity="center_vertical">
-                                        <text text="&#9973;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="自动搁浅商船出征" textColor={C.textSecondary} textSize="13sp"/>
-                                    </horizontal>
-                                    <horizontal margin="0 0 0 0" gravity="center_vertical">
-                                        <text text="&#9733;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="悬浮球控制面板" textColor={C.textSecondary} textSize="13sp"/>
-                                    </horizontal>
-                                </vertical>
-                            </card>
-
-                            <card id="github_link" w="*" cardCornerRadius="14dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="0 12 0 0">
-                                <horizontal padding="16 14" gravity="center_vertical" foreground="?selectableItemBackground">
-                                    <text text="&#128279;" textSize="16sp" margin="0 0 10 0"/>
-                                    <vertical layout_weight="1">
-                                        <text text="GitHub" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
-                                        <text text="github.com/ssssshql/fkssj" textColor={C.textSecondary} textSize="11sp" margin="0 2 0 0"/>
-                                    </vertical>
-                                    <text text="&#8250;" textColor={C.textMuted} textSize="18sp"/>
-                                </horizontal>
-                            </card>
-
-                            <text text="本工具仅供学习交流使用" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 16 0 0"/>
-                            <View h="60"/>
-                        </vertical>
-                    </ScrollView>
-                </vertical>
-
-            </frame>
-
-            {/* ── Floating bottom nav ── */}
-            <frame w="*" h="auto" margin="80 0 80 16">
-                <card cardCornerRadius="26dp" cardElevation="0dp" cardBackgroundColor={C.card} w="*" h="auto">
-                    <horizontal gravity="center" padding="10 8">
-                        <card id="nav_home" cardCornerRadius="18dp" cardElevation="0dp" cardBackgroundColor={C.accent} w="46" h="46" margin="0 0 6 0" foreground="?selectableItemBackground">
-                            <text id="nav_home_icon" text="&#9750;" textColor="#FFFFFF" textSize="20sp" gravity="center"/>
-                        </card>
-                        <card id="nav_about" cardCornerRadius="18dp" cardElevation="0dp" cardBackgroundColor={C.bg} w="46" h="46" margin="6 0 0 0" foreground="?selectableItemBackground">
-                            <text id="nav_about_icon" text="&#9432;" textColor={C.textMuted} textSize="20sp" gravity="center"/>
-                        </card>
-                    </horizontal>
-                </card>
             </frame>
 
         </vertical>
     </frame>
 );
 
-// ── Nav ──
-$ui.nav_home.on("click", function() { currentNav = "home"; uiHelpers.switchNav("home", currentNav, C); });
-$ui.nav_about.on("click", function() { currentNav = "about"; uiHelpers.switchNav("about", currentNav, C); });
-$ui.github_link.on("click", function() {
-    app.openUrl("https://github.com/ssssshql/fkssj");
+// ── About dialog ──
+$ui.btn_about.on("click", function() {
+    var aboutXml = '<vertical padding="20 16" bg="' + C.bg + '">' +
+        '<text text="疯狂水世界" textColor="' + C.textPrimary + '" textSize="20sp" textStyle="bold" gravity="center"/>' +
+        '<text text="辅助工具 v1.0" textColor="' + C.textSecondary + '" textSize="13sp" gravity="center" margin="0 2 0 16"/>' +
+        '<card w="*" cardCornerRadius="12dp" cardElevation="0dp" cardBackgroundColor="' + C.card + '">' +
+        '<vertical padding="16 14">' +
+        '<text text="功能介绍" textColor="' + C.textPrimary + '" textSize="14sp" textStyle="bold" margin="0 0 10 0"/>' +
+        '<text text="&#127793; 自动种植、收割作物" textColor="' + C.textSecondary + '" textSize="13sp" margin="0 0 6 0"/>' +
+        '<text text="&#9876; 自动锻造武器" textColor="' + C.textSecondary + '" textSize="13sp" margin="0 0 6 0"/>' +
+        '<text text="&#128293; 自动参与盟战" textColor="' + C.textSecondary + '" textSize="13sp" margin="0 0 6 0"/>' +
+        '<text text="&#9973; 自动搁浅商船出征" textColor="' + C.textSecondary + '" textSize="13sp" margin="0 0 6 0"/>' +
+        '<text text="&#9733; 悬浮球控制面板" textColor="' + C.textSecondary + '" textSize="13sp"/>' +
+        '</vertical></card>' +
+        '<text text="&#128279; github.com/ssssshql/fkssj" textColor="' + C.accent + '" textSize="12sp" gravity="center" margin="0 14 0 8"/>' +
+        '<text text="本工具仅供学习交流使用" textColor="' + C.textMuted + '" textSize="11sp" gravity="center"/>' +
+        '</vertical>';
+    dialogs.build({
+        customView: $ui.inflate(aboutXml),
+        positive: "关闭",
+        cancelable: true
+    }).show();
 });
+$ui.btn_about_github = null; // placeholder
 
 // ── Circle icon ──
 uiHelpers.initCircleIcon($ui.ico_view, icoBitmap);
@@ -287,26 +240,31 @@ try {
 } catch(e) {}
 
 // ── Permission checks ──
+var _allPermsOk = false;
+
 function checkPerms() {
     var ok1 = gameHelper.hasPackageListPerm();
     var ok2 = gameHelper.hasAccessibilityPerm();
     var ok3 = gameHelper.hasOverlayPerm();
+    _allPermsOk = ok1 && ok2 && ok3;
     $ui.run(function() {
         try { $ui.perm_pkg_list.setChecked(ok1); $ui.perm_pkg_list_label.setText(ok1 ? "已开启" : "未开启"); $ui.perm_pkg_list_label.setTextColor(colors.parseColor(ok1 ? C.green : C.error)); } catch(e) {}
         try { $ui.perm_access.setChecked(ok2); $ui.perm_access_label.setText(ok2 ? "已开启" : "未开启"); $ui.perm_access_label.setTextColor(colors.parseColor(ok2 ? C.green : C.error)); } catch(e) {}
         try { $ui.perm_overlay.setChecked(ok3); $ui.perm_overlay_label.setText(ok3 ? "已开启" : "未开启"); $ui.perm_overlay_label.setTextColor(colors.parseColor(ok3 ? C.green : C.error)); } catch(e) {}
+        // 启动按钮状态
+        try {
+            $ui.btn_launch.setCardBackgroundColor(colors.parseColor(_allPermsOk ? C.accent : "#C7C7CC"));
+        } catch(e) {}
     });
-    return ok1 && ok2 && ok3;
+    return _allPermsOk;
 }
 checkPerms();
-
-// 定时刷新权限状态（每 3 秒）
 setInterval(function() { checkPerms(); }, 3000);
 
-// 点击行跳转设置页
+// 点击权限行：应用列表/悬浮窗直接请求，无障碍跳转设置
 $ui.perm_pkg_list_row.on("click", function() {
     try {
-        var intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        var intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_SOURCES);
         intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
         app.startActivity(intent);
     } catch(e) {}
@@ -327,7 +285,7 @@ $ui.perm_overlay_row.on("click", function() {
 // ── Task management ──
 function startTask(type) {
     if (currentTask) return;
-    if (!checkPerms()) {
+    if (!_allPermsOk) {
         toast("请先开启所需权限");
         return;
     }

@@ -48,19 +48,6 @@ helpers.initStats = function(stats) {
     });
 };
 
-helpers.switchNav = function(nav, currentNav, C) {
-    var pages = ["home", "about"];
-    for (var i = 0; i < pages.length; i++) {
-        var p = pages[i];
-        try {
-            $ui["page_" + p].setVisibility(p === nav ? android.view.View.VISIBLE : android.view.View.GONE);
-            var active = (p === nav);
-            $ui["nav_" + p].setCardBackgroundColor(colors.parseColor(active ? C.accent : C.bg));
-            $ui["nav_" + p + "_icon"].setTextColor(colors.parseColor(active ? "#FFFFFF" : C.textMuted));
-        } catch(e) {}
-    }
-};
-
 helpers.initCircleIcon = function(iv, srcBitmap) {
     try {
         iv.post(function() {
