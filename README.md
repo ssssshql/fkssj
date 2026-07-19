@@ -1,6 +1,6 @@
 # 疯狂水世界 - 辅助工具
 
-基于 [AutoJs6](https://github.com/niceSaber/AutoJs6) 的手游自动化辅助工具，用于"疯狂水世界"游戏。
+基于 [AutoJs6](https://github.com/SuperMonster003/AutoJs6) 的手游自动化辅助工具，用于"疯狂水世界"游戏。
 
 ## 功能
 
@@ -15,7 +15,7 @@
 ## 运行环境
 
 - Android 设备
-- [AutoJs6](https://github.com/niceSaber/AutoJs6) App
+- [AutoJs6](https://github.com/SuperMonster003/AutoJs6) App
 - 屏幕分辨率：1080 × 2400（仅支持此分辨率）
 - Android API版本 >= 24
 
