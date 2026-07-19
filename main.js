@@ -13,7 +13,6 @@ var floatingPanel = require("./modules/floatingPanel.js");
 var navigate = require("./modules/navigate.js");
 
 var C = theme.C;
-var redeemCodes = theme.redeemCodes;
 var foodOptions = theme.foodOptions;
 
 var loadedImages = null;
@@ -48,7 +47,7 @@ $ui.layout(
                                 </frame>
                                 <vertical layout_weight="1">
                                     <text text="疯狂水世界" textColor={C.textPrimary} textSize="21sp" textStyle="bold"/>
-                                    <text text="辅助工具 v1.0" textColor={C.textMuted} textSize="12sp" margin="0 2 0 0"/>
+                                    <text text="辅助工具 v1.0" textColor={C.textMuted} textSize="13sp" margin="0 2 0 0"/>
                                 </vertical>
                                 <card id="btn_launch" cardCornerRadius="22dp" cardElevation="1dp"
                                       cardBackgroundColor={C.accent} foreground="?selectableItemBackground" w="44" h="44">
@@ -56,106 +55,95 @@ $ui.layout(
                                 </card>
                             </horizontal>
 
-                            <text text="累计统计" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 12 10 16"/>
+                            <text text="累计统计" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 12 10 16"/>
 
                             <horizontal w="*" padding="16 0 16 0">
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="0 0 4 4">
                                     <vertical gravity="center" padding="8 10">
                                         <text text="&#127793;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
                                         <text id="stat_food" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="种植" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                        <text text="种植" textColor={C.textMuted} textSize="12sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
                                     <vertical gravity="center" padding="8 10">
                                         <text text="&#9876;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
                                         <text id="stat_weapon" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="锻造" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                        <text text="锻造" textColor={C.textMuted} textSize="12sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 4 4">
                                     <vertical gravity="center" padding="8 10">
                                         <text text="&#9973;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
                                         <text id="stat_ship" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="商船" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                        <text text="商船" textColor={C.textMuted} textSize="12sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
                                 <card w="0" layout_weight="1" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="4 0 0 4">
                                     <vertical gravity="center" padding="8 10">
                                         <text text="&#128293;" textSize="22sp" gravity="center" margin="0 0 0 4"/>
                                         <text id="stat_war" text="0" textColor={C.accent} textSize="22sp" textStyle="bold" gravity="center"/>
-                                        <text text="盟战" textColor={C.textMuted} textSize="10sp" gravity="center" margin="0 1 0 0"/>
+                                        <text text="盟战" textColor={C.textMuted} textSize="12sp" gravity="center" margin="0 1 0 0"/>
                                     </vertical>
                                 </card>
                             </horizontal>
 
                             {/* Device info */}
-                            <text text="设备信息" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 12"/>
+                            <text text="设备信息" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 12"/>
                             <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <vertical padding="12 10">
                                     <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="品牌型号" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="txt_device_model" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text text="品牌型号" textColor={C.textSecondary} textSize="13sp" w="70"/>
+                                        <text id="txt_device_model" text="--" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
                                     </horizontal>
                                     <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="Android" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="txt_device_android" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
-                                        <text id="txt_android_status" text="" textColor={C.textMuted} textSize="10sp" margin="8 0 0 0"/>
+                                        <text text="Android" textColor={C.textSecondary} textSize="13sp" w="70"/>
+                                        <text id="txt_device_android" text="--" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
+                                        <text id="txt_android_status" text="" textColor={C.textMuted} textSize="12sp" margin="8 0 0 0"/>
                                     </horizontal>
                                     <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="分辨率" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="txt_resolution" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
-                                        <text id="txt_resolution_status" text="" textColor={C.textMuted} textSize="10sp" margin="8 0 0 0"/>
+                                        <text text="分辨率" textColor={C.textSecondary} textSize="13sp" w="70"/>
+                                        <text id="txt_resolution" text="--" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
+                                        <text id="txt_resolution_status" text="" textColor={C.textMuted} textSize="12sp" margin="8 0 0 0"/>
                                     </horizontal>
                                     <horizontal gravity="center_vertical">
-                                        <text text="电量" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="txt_device_battery" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold"/>
+                                        <text text="电量" textColor={C.textSecondary} textSize="13sp" w="70"/>
+                                        <text id="txt_device_battery" text="--" textColor={C.textPrimary} textSize="13sp" textStyle="bold"/>
                                     </horizontal>
                                 </vertical>
                             </card>
 
                             {/* Permissions */}
-                            <text text="权限状态" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 12"/>
+                            <text text="权限状态" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 12"/>
                             <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <vertical padding="12 10">
-                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="应用列表" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_pkg_list" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
-                                        <text id="perm_pkg_list_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
+                                    <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
+                                        <text text="应用列表" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
+                                        <text id="perm_pkg_list_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
+                                        <Switch id="perm_pkg_list" checked="false" clickable="false" w="wrap" h="wrap"/>
                                     </horizontal>
-                                    <horizontal gravity="center_vertical" margin="0 0 0 6">
-                                        <text text="无障碍" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_access" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
-                                        <text id="perm_access_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
+                                    <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8" foreground="?selectableItemBackground">
+                                        <text text="无障碍" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
+                                        <text id="perm_access_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
+                                        <Switch id="perm_access" checked="false" clickable="false" w="wrap" h="wrap"/>
                                     </horizontal>
-                                    <horizontal gravity="center_vertical">
-                                        <text text="悬浮窗" textColor={C.textSecondary} textSize="11sp" w="70"/>
-                                        <text id="perm_overlay" text="--" textColor={C.textPrimary} textSize="11sp" textStyle="bold" layout_weight="1"/>
-                                        <text id="perm_overlay_btn" text="前往开启" textColor={C.accent} textSize="10sp" visibility="gone" padding="6 2 6 2"/>
+                                    <horizontal id="perm_overlay_row" gravity="center_vertical" foreground="?selectableItemBackground">
+                                        <text text="悬浮窗" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
+                                        <text id="perm_overlay_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
+                                        <Switch id="perm_overlay" checked="false" clickable="false" w="wrap" h="wrap"/>
                                     </horizontal>
                                 </vertical>
                             </card>
 
                             {/* Log */}
-                            <text text="运行日志" textColor={C.textMuted} textSize="12sp" textStyle="bold" padding="20 14 10 16"/>
+                            <text text="运行日志" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 16"/>
                             <card w="*" cardCornerRadius="12dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <ScrollView id="log_scroll" h="160" padding="12 10">
-                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="11sp" typeface="monospace" lineSpacingMultiplier="1.0"/>
+                                    <text id="txt_log" text="等待操作..." textColor={C.textSecondary} textSize="13sp" typeface="monospace" lineSpacingMultiplier="1.0"/>
                                 </ScrollView>
                             </card>
 
                             <View h="60" bg={C.bg}/>
-                        </vertical>
-                    </ScrollView>
-                </vertical>
-
-                {/* ── Redeem page ── */}
-                <vertical id="page_redeem" layout_width="match_parent" layout_height="match_parent" visibility="gone">
-                    <ScrollView layout_width="match_parent" layout_height="match_parent" bg={C.bg}>
-                        <vertical layout_width="match_parent" padding="16 16 16 12">
-                            <text text="兑换码" textColor={C.textPrimary} textSize="20sp" textStyle="bold" margin="0 0 16 0"/>
-                            <vertical id="redeem_list"/>
-                            <View h="60"/>
                         </vertical>
                     </ScrollView>
                 </vertical>
@@ -192,7 +180,7 @@ $ui.layout(
                                     </horizontal>
                                     <horizontal margin="0 0 0 0" gravity="center_vertical">
                                         <text text="&#9733;" textSize="16sp" margin="0 0 10 0"/>
-                                        <text text="兑换码一键复制" textColor={C.textSecondary} textSize="13sp"/>
+                                        <text text="悬浮球控制面板" textColor={C.textSecondary} textSize="13sp"/>
                                     </horizontal>
                                 </vertical>
                             </card>
@@ -217,14 +205,11 @@ $ui.layout(
             </frame>
 
             {/* ── Floating bottom nav ── */}
-            <frame w="*" h="auto" margin="60 0 60 16">
+            <frame w="*" h="auto" margin="80 0 80 16">
                 <card cardCornerRadius="26dp" cardElevation="0dp" cardBackgroundColor={C.card} w="*" h="auto">
                     <horizontal gravity="center" padding="10 8">
                         <card id="nav_home" cardCornerRadius="18dp" cardElevation="0dp" cardBackgroundColor={C.accent} w="46" h="46" margin="0 0 6 0" foreground="?selectableItemBackground">
                             <text id="nav_home_icon" text="&#9750;" textColor="#FFFFFF" textSize="20sp" gravity="center"/>
-                        </card>
-                        <card id="nav_redeem" cardCornerRadius="18dp" cardElevation="0dp" cardBackgroundColor={C.bg} w="46" h="46" margin="6 0 6 0" foreground="?selectableItemBackground">
-                            <text id="nav_redeem_icon" text="&#9733;" textColor={C.textMuted} textSize="20sp" gravity="center"/>
                         </card>
                         <card id="nav_about" cardCornerRadius="18dp" cardElevation="0dp" cardBackgroundColor={C.bg} w="46" h="46" margin="6 0 0 0" foreground="?selectableItemBackground">
                             <text id="nav_about_icon" text="&#9432;" textColor={C.textMuted} textSize="20sp" gravity="center"/>
@@ -239,14 +224,10 @@ $ui.layout(
 
 // ── Nav ──
 $ui.nav_home.on("click", function() { currentNav = "home"; uiHelpers.switchNav("home", currentNav, C); });
-$ui.nav_redeem.on("click", function() { currentNav = "redeem"; uiHelpers.switchNav("redeem", currentNav, C); });
 $ui.nav_about.on("click", function() { currentNav = "about"; uiHelpers.switchNav("about", currentNav, C); });
 $ui.github_link.on("click", function() {
     app.openUrl("https://github.com/ssssshql/fkssj");
 });
-
-// ── Build redeem list ──
-uiHelpers.buildRedeemList(redeemCodes, C, uiHelpers.dateStr);
 
 // ── Circle icon ──
 uiHelpers.initCircleIcon($ui.ico_view, icoBitmap);
@@ -311,36 +292,31 @@ function checkPerms() {
     var ok2 = gameHelper.hasAccessibilityPerm();
     var ok3 = gameHelper.hasOverlayPerm();
     $ui.run(function() {
-        setPermText("perm_pkg_list", ok1);
-        setPermText("perm_access", ok2);
-        setPermText("perm_overlay", ok3);
+        try { $ui.perm_pkg_list.setChecked(ok1); $ui.perm_pkg_list_label.setText(ok1 ? "已开启" : "未开启"); $ui.perm_pkg_list_label.setTextColor(colors.parseColor(ok1 ? C.green : C.error)); } catch(e) {}
+        try { $ui.perm_access.setChecked(ok2); $ui.perm_access_label.setText(ok2 ? "已开启" : "未开启"); $ui.perm_access_label.setTextColor(colors.parseColor(ok2 ? C.green : C.error)); } catch(e) {}
+        try { $ui.perm_overlay.setChecked(ok3); $ui.perm_overlay_label.setText(ok3 ? "已开启" : "未开启"); $ui.perm_overlay_label.setTextColor(colors.parseColor(ok3 ? C.green : C.error)); } catch(e) {}
     });
     return ok1 && ok2 && ok3;
-}
-function setPermText(id, ok) {
-    $ui[id].setText(ok ? "已开启" : "未开启");
-    $ui[id].setTextColor(colors.parseColor(ok ? C.green : C.error));
-    var btn = $ui[id + "_btn"];
-    if (btn) btn.setVisibility(ok ? 8 : 0);
 }
 checkPerms();
 
 // 定时刷新权限状态（每 3 秒）
 setInterval(function() { checkPerms(); }, 3000);
 
-$ui.perm_pkg_list_btn.on("click", function() {
+// 点击行跳转设置页
+$ui.perm_pkg_list_row.on("click", function() {
     try {
         var intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
         app.startActivity(intent);
     } catch(e) {}
 });
-$ui.perm_access_btn.on("click", function() {
+$ui.perm_access_row.on("click", function() {
     try {
         app.startActivity(new android.content.Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));
     } catch(e) {}
 });
-$ui.perm_overlay_btn.on("click", function() {
+$ui.perm_overlay_row.on("click", function() {
     try {
         var intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
         intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));

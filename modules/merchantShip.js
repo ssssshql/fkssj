@@ -200,7 +200,23 @@ merchantShip.runHourlyOnce = function(imgs, _log, shouldStop) {
     // 检测当前界面
     var scene = navigate.detectScene(imgs);
     _log("[商船] 当前界面: " + (scene === "world" ? "世界" : scene === "base" ? "基地" : "未知"));
-    if (scene === "unknown") { _log("[商船] 不在游戏界面，跳过"); return false; }
+
+    // 未知界面：可能在子界面（如种植），尝试按返回键退出
+    if (scene === "unknown") {
+        _log("[商船] 尝试退出子界面...");
+        back();
+        sleep(1500);
+        scene = navigate.detectScene(imgs);
+        _log("[商船] 退出后界面: " + (scene === "world" ? "世界" : scene === "base" ? "基地" : "未知"));
+    }
+    if (scene === "unknown") {
+        // 再按一次返回
+        back();
+        sleep(1500);
+        scene = navigate.detectScene(imgs);
+        _log("[商船] 再次退出后界面: " + (scene === "world" ? "世界" : scene === "base" ? "基地" : "未知"));
+    }
+    if (scene === "unknown") { _log("[商船] 无法退出到游戏界面，跳过"); return false; }
 
     // 如果在基地，切换到世界
     var needBackToBase = (scene === "base");

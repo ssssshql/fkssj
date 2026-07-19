@@ -49,7 +49,7 @@ helpers.initStats = function(stats) {
 };
 
 helpers.switchNav = function(nav, currentNav, C) {
-    var pages = ["home", "redeem", "about"];
+    var pages = ["home", "about"];
     for (var i = 0; i < pages.length; i++) {
         var p = pages[i];
         try {
@@ -58,30 +58,6 @@ helpers.switchNav = function(nav, currentNav, C) {
             $ui["nav_" + p].setCardBackgroundColor(colors.parseColor(active ? C.accent : C.bg));
             $ui["nav_" + p + "_icon"].setTextColor(colors.parseColor(active ? "#FFFFFF" : C.textMuted));
         } catch(e) {}
-    }
-};
-
-helpers.buildRedeemList = function(redeemCodes, C, dateStrFn) {
-    for (var i = 0; i < redeemCodes.length; i++) {
-        (function(idx) {
-            var rc = redeemCodes[idx];
-            var xml = '<card cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor="' + C.card + '" margin="0 0 0 8">';
-            xml += '<horizontal padding="14 12" gravity="center_vertical">';
-            xml += '<vertical layout_weight="1">';
-            xml += '<text text="' + rc.code + '" textColor="' + C.textPrimary + '" textSize="14sp" typeface="monospace" textStyle="bold"/>';
-            xml += '<text text="' + rc.desc + '  ·  ' + dateStrFn(rc.time) + '" textColor="' + C.textSecondary + '" textSize="11sp" margin="0 2 0 0"/>';
-            xml += '</vertical>';
-            xml += '<text text="复制" textColor="' + C.accent + '" textSize="12sp" textStyle="bold" padding="6 4"/>';
-            xml += '</horizontal></card>';
-            var row = $ui.inflate(xml, $ui.redeem_list, false);
-            var hor = row.getChildAt(0);
-            var copyBtn = hor.getChildAt(1);
-            copyBtn.on("click", function() {
-                setClip(rc.code);
-                toast("已复制: " + rc.code);
-            });
-            $ui.redeem_list.addView(row);
-        })(i);
     }
 };
 
