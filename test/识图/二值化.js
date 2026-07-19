@@ -3,10 +3,10 @@ let gameHelper = require("/sdcard/脚本/fkssj/modules/gameHelper.js");
 requestScreenCapture(false);
 sleep(1000);
 
-var img = images.read("/sdcard/脚本/fkssj/img/image.png");
+var img = images.read("/sdcard/脚本/fkssj/img/土地.png");
 
 
-runTest(0.7);
+runTest(0.8);
 
 function runTest(threshold) {
     threads.start(function() {
