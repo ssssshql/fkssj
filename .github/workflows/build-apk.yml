@@ -1,0 +1,29 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download AutoJs6 APK
+        run: |
+          wget https://github.com/SuperMonster003/AutoJs6/releases/download/v6.7.0/autojs6-v6.7.0-universal-047ae62e.apk -O autojs6.apk
+
+      - name: Build APK
+        uses: Steven-Qiang/AutoJs6-ApkBuilder@main
+        with:
+          autojs: autojs6.apk
+          source: ./
+          output: 水世界辅助.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 水世界辅助
+          path: 水世界辅助.apk
