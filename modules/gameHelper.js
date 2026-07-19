@@ -296,19 +296,6 @@ gameHelper.hasAccessibilityPerm = function() {
     } catch(e) { return false; }
 };
 
-// 后台弹出界面权限
-gameHelper.hasBackgroundPopupPerm = function() {
-    try {
-        var appOps = context.getSystemService(android.content.Context.APP_OPS_SERVICE);
-        var mode = appOps.checkOpNoThrow(
-            android.app.AppOpsManager.OP_SYSTEM_ALERT_WINDOW,
-            android.os.Process.myUid(),
-            context.getPackageName()
-        );
-        return mode === android.app.AppOpsManager.MODE_ALLOWED;
-    } catch(e) { return false; }
-};
-
 // 悬浮窗权限
 gameHelper.hasOverlayPerm = function() {
     try {

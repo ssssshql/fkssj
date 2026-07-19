@@ -120,20 +120,20 @@ $ui.layout(
                             <text text="权限状态" textColor={C.textMuted} textSize="13sp" textStyle="bold" padding="20 14 10 12"/>
                             <card w="*" cardCornerRadius="10dp" cardElevation="0dp" cardBackgroundColor={C.card} margin="16 0 16 0">
                                 <vertical padding="12 10">
-                                    <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8" clickable="true" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_pkg_list_row" gravity="center_vertical" margin="0 0 0 8">
                                         <text text="应用列表" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_pkg_list_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_pkg_list" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_pkg_list" checked="false" w="auto" h="auto"/>
                                     </horizontal>
-                                    <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8" clickable="true" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_access_row" gravity="center_vertical" margin="0 0 0 8">
                                         <text text="无障碍" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_access_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_access" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_access" checked="false" w="auto" h="auto"/>
                                     </horizontal>
-                                    <horizontal id="perm_overlay_row" gravity="center_vertical" clickable="true" foreground="?selectableItemBackground">
+                                    <horizontal id="perm_overlay_row" gravity="center_vertical">
                                         <text text="悬浮窗" textColor={C.textSecondary} textSize="13sp" layout_weight="1"/>
                                         <text id="perm_overlay_label" text="未开启" textColor={C.error} textSize="12sp" margin="0 0 8 0"/>
-                                        <Switch id="perm_overlay" checked="false" clickable="false" focusable="false" w="auto" h="auto"/>
+                                        <Switch id="perm_overlay" checked="false" w="auto" h="auto"/>
                                     </horizontal>
                                 </vertical>
                             </card>
@@ -241,16 +241,21 @@ try {
 
 // ── Permission checks ──
 var _allPermsOk = false;
+var _ignorePermSwitch = false;
+var _permCheckPaused = false;  // Switch 操作后暂停自动刷新
 
 function checkPerms() {
+    if (_permCheckPaused) return;
     var ok1 = gameHelper.hasPackageListPerm();
     var ok2 = gameHelper.hasAccessibilityPerm();
     var ok3 = gameHelper.hasOverlayPerm();
     _allPermsOk = ok1 && ok2 && ok3;
     $ui.run(function() {
+        _ignorePermSwitch = true;
         try { $ui.perm_pkg_list.setChecked(ok1); $ui.perm_pkg_list_label.setText(ok1 ? "已开启" : "未开启"); $ui.perm_pkg_list_label.setTextColor(colors.parseColor(ok1 ? C.green : C.error)); } catch(e) {}
         try { $ui.perm_access.setChecked(ok2); $ui.perm_access_label.setText(ok2 ? "已开启" : "未开启"); $ui.perm_access_label.setTextColor(colors.parseColor(ok2 ? C.green : C.error)); } catch(e) {}
         try { $ui.perm_overlay.setChecked(ok3); $ui.perm_overlay_label.setText(ok3 ? "已开启" : "未开启"); $ui.perm_overlay_label.setTextColor(colors.parseColor(ok3 ? C.green : C.error)); } catch(e) {}
+        _ignorePermSwitch = false;
         // 启动按钮状态
         try {
             $ui.btn_launch.setCardBackgroundColor(colors.parseColor(_allPermsOk ? C.accent : "#C7C7CC"));
@@ -258,11 +263,23 @@ function checkPerms() {
     });
     return _allPermsOk;
 }
+
+// 暂停自动刷新，延迟恢复
+function pausePermCheck() {
+    _permCheckPaused = true;
+    setTimeout(function() { _permCheckPaused = false; checkPerms(); }, 8000);
+}
+
 checkPerms();
 setInterval(function() { checkPerms(); }, 3000);
 
-// 点击权限行跳转对应设置
-$ui.perm_pkg_list_row.on("click", function() {
+// ── Permission Switch handlers ──
+// 点击任意权限开关 → 跳转到对应设置页，用户手动开启/关闭
+
+$ui.perm_pkg_list.on("check", function(checked) {
+    if (_ignorePermSwitch) return;
+    pausePermCheck();
+    // 应用列表：跳转应用详情设置页
     try {
         app.startActivity(new android.content.Intent(
             android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -270,18 +287,35 @@ $ui.perm_pkg_list_row.on("click", function() {
         ));
     } catch(e) {}
 });
-$ui.perm_access_row.on("click", function() {
+
+$ui.perm_access.on("check", function(checked) {
+    if (_ignorePermSwitch) return;
+    pausePermCheck();
+    // 无障碍：跳转无障碍设置页
     try {
         app.startActivity(new android.content.Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));
     } catch(e) {}
 });
-$ui.perm_overlay_row.on("click", function() {
+
+$ui.perm_overlay.on("check", function(checked) {
+    if (_ignorePermSwitch) return;
+    pausePermCheck();
+    // 悬浮窗：跳转悬浮窗管理设置页
     try {
-        app.startActivity(new android.content.Intent(
+        var intent = new android.content.Intent(
             android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             android.net.Uri.parse("package:" + context.getPackageName())
-        ));
-    } catch(e) {}
+        );
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    } catch(e) {
+        try {
+            app.startActivity(new android.content.Intent(
+                android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                android.net.Uri.parse("package:" + context.getPackageName())
+            ));
+        } catch(e2) {}
+    }
 });
 
 // ── Task management ──

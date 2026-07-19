@@ -34,6 +34,17 @@ navigate.goToForgeAndBack = function(imgs, _log) {
     _log("点击锻造屋");
     sleep(2000);
 
+    // 检测锻造完成弹窗，如果出现则点击空白区域关闭
+    var dm = context.getResources().getDisplayMetrics();
+    if (imgs.duanzaoDone) {
+        var forgeDonePos = gh.findFirst(imgs.duanzaoDone, 0.7, "锻造完成");
+        if (forgeDonePos) {
+            _log("检测到锻造完成，点击空白区域关闭");
+            click(random(100, dm.widthPixels - 100), random(200, dm.heightPixels - 200));
+            sleep(1500);
+        }
+    }
+
     var backPos = gh.findFirst(imgs.forgeBack, 0.7, "锻造屋返回");
     if (!backPos) {
         _log("未找到锻造屋返回按钮，等待...");
@@ -86,8 +97,17 @@ navigate.autoLocate = function(imgs, _log) {
     // 3. 双指缩放至最小地图
     navigate.pinchZoomOut(_log);
 
-    // 4. 点击锻造屋初始化位置
-    navigate.goToForgeAndBack(imgs, _log);
+    // 等待世界地图完全加载再识图
+    _log("等待地图加载...");
+    sleep(3000);
+
+    // 4. 点击锻造屋初始化位置（找不到则重试一次）
+    var forgeOk = navigate.goToForgeAndBack(imgs, _log);
+    if (!forgeOk) {
+        _log("锻造屋未找到，等待2秒后重试...");
+        sleep(2000);
+        navigate.goToForgeAndBack(imgs, _log);
+    }
     sleep(1000);
 
     // 5. 向左滑动定位到种植区
