@@ -15,6 +15,7 @@ gameHelper.loadImages = function() {
             "胡萝卜": images.read("./img/作物/胡萝卜.png"),
             "卷心菜": images.read("./img/作物/卷心菜.png"),
             "大豆": images.read("./img/作物/大豆.png"),
+            "南瓜": images.read("./img/作物/南瓜.png"),
         },
         // 作物种子图标
         seeds: {
@@ -25,6 +26,7 @@ gameHelper.loadImages = function() {
             "胡萝卜": images.read("./img/种子图标/胡萝卜.png"),
             "卷心菜": images.read("./img/种子图标/卷心菜.png"),
             "大豆": images.read("./img/种子图标/大豆.png"),
+            "南瓜": images.read("./img/种子图标/南瓜.png"),
         },
         liandao: images.read("./img/镰刀.png"),
         tudi: images.read("./img/土地.png"),

@@ -15,7 +15,7 @@ plantFood.run = function(imgs, foodType, onProgress, shouldStop, uiLog, onFoodSw
     }
 
     // 可切换的作物列表（不含当前）
-    var allFoods = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆"];
+    var allFoods = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆", "南瓜"];
     var currentFood = foodType;
     var _lastShipHour = shipRunOnStart ? new Date().getHours() : -1;
     var _justSwitchedFood = false;

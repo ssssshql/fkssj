@@ -157,7 +157,7 @@ panel.expandPanel = function(ctx) {
     var statusBarH = context.getResources().getDimensionPixelSize(resId);
     var pw = Math.round(dm.widthPixels * 0.78);
     var taskKeys = ["food", "weapon", "ship", "war"];
-    var cropNames = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆"];
+    var cropNames = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆", "南瓜"];
     floatWin = floaty.rawWindow(
         <frame id="panel_root" bg="#00000000">
             <card cardCornerRadius="12dp" cardElevation="2dp" cardBackgroundColor="#FFFFFF" w="*" h="auto">

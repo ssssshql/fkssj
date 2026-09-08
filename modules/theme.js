@@ -14,7 +14,7 @@ var C = {
 
 var cropStatMap = {
     "水稻": "rice", "玉米": "corn", "土豆": "potato",
-    "西红柿": "tomato", "胡萝卜": "carrot", "卷心菜": "cabbage", "大豆": "soybean"
+    "西红柿": "tomato", "胡萝卜": "carrot", "卷心菜": "cabbage", "大豆": "soybean", "南瓜": "pumpkin"
 };
 
 var redeemCodes = [
@@ -23,6 +23,6 @@ var redeemCodes = [
     { code: "CROP666", desc: "种子礼包", time: new Date(2026, 6, 16, 20, 0) }
 ];
 
-var foodOptions = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆"];
+var foodOptions = ["水稻", "玉米", "土豆", "西红柿", "胡萝卜", "卷心菜", "大豆", "南瓜"];
 
 module.exports = { C: C, cropStatMap: cropStatMap, redeemCodes: redeemCodes, foodOptions: foodOptions };
